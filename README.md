@@ -1,11 +1,20 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Notest
+
+## Setup
+
+For the app to work, you need to create a `.env.local` folder at the root directory and insert the following line:
+
+```
+NEXT_PUBLIC_OPENAI_API_KEY=
+```
+
+You can obtain your API key at https://beta.openai.com/account/api-keys
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
 # or
 yarn dev
 ```
