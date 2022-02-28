@@ -11,10 +11,10 @@ const Home = () => {
     onSubmit: async ({ context }) => {
       try {
         const response = await openai.createCompletion('text-davinci-001', {
-          prompt: `Generate 5 questions and answers:${context}`,
-          temperature: 0, // randomness of the response -- level of unpredicability
+          prompt: `Generate questions and answers:${context}`,
+          temperature: 0.9, // randomness of the response -- level of unpredicability
           max_tokens: 100, // number of words returned
-          top_p: 1, // 
+          top_p: 1,
           frequency_penalty: 0,
           presence_penalty: 0,
         });
@@ -28,9 +28,9 @@ const Home = () => {
   });
 
   return (
-    <div>
+    <div className='bg-blue-200'>
       <form onSubmit={formik.handleSubmit}>
-        <input
+        <textarea
           name='context'
           type='text'
           value={formik.values.context}
@@ -40,7 +40,7 @@ const Home = () => {
       </form>
       <div>
         {qs.map((q) => (
-          <p key={q[0]}>{q}</p>
+          <p key={q}>{q}</p>
         ))}
       </div>
     </div>

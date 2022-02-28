@@ -15,7 +15,6 @@ You can obtain your API key at https://beta.openai.com/account/api-keys
 First, run the development server:
 
 ```bash
-# or
 yarn dev
 ```
 
