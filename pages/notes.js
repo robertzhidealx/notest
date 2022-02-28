@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { noteService } from '../services/note.services';
 import { format } from 'date-fns';
+import { noteService } from '../services/note.services';
 
 const Notes = () => {
   const [notes, setNotes] = useState([]);
@@ -8,7 +8,6 @@ const Notes = () => {
   useEffect(() => {
     (async () => {
       const res = await noteService.getAll();
-      console.log(res);
       setNotes(res);
     })();
   }, []);
