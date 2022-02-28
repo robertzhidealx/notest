@@ -1,6 +1,5 @@
 import React from 'react';
-import EditableBlock from './editableBlock';
-import getuid from './uid';
+import EditableBlock from '../lib/editableBlock';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
