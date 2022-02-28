@@ -12,9 +12,9 @@ const Home = () => {
       try {
         const response = await openai.createCompletion('text-davinci-001', {
           prompt: `Generate 5 questions and answers:${context}`,
-          temperature: 0,
-          max_tokens: 100,
-          top_p: 1,
+          temperature: 0, // randomness of the response -- level of unpredicability
+          max_tokens: 100, // number of words returned
+          top_p: 1, // 
           frequency_penalty: 0,
           presence_penalty: 0,
         });

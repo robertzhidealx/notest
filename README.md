@@ -2,7 +2,7 @@
 
 ## Setup
 
-For the app to work, you need to create a `.env.local` folder at the root directory and insert the following line:
+For the app to work, you need to create a `.env.local` file at the root directory and insert the following line:
 
 ```
 NEXT_PUBLIC_OPENAI_API_KEY=
