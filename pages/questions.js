@@ -28,7 +28,7 @@ const Home = () => {
   });
 
   return (
-    <div className='bg-blue-200'>
+    <div className=''>
       <form onSubmit={formik.handleSubmit}>
         <textarea
           name='context'

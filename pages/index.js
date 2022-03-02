@@ -15,7 +15,7 @@ const setCaretToEnd = (element) => {
   element.focus();
 };
 
-const initialBlock = { id: uid(), html: '', tag: 'p' };
+const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
 
 const Home = () => {
   const [blocks, setBlocks] = useState([initialBlock]);

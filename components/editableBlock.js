@@ -1,17 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import ContentEditable from 'react-contenteditable';
+import clsx from 'clsx';
 
 const EditableBlock = (props) => {
   const contentEditable = useRef(null);
-  const html = useRef('');
+  const html = useRef(props.html);
+  const tag = useRef(props.tag);
   const htmlBackup = useRef('');
-  const tag = useRef('p');
   const previousKey = useRef('');
-
-  useEffect(() => {
-    html.current = props.html;
-    tag.current = props.tag;
-  }, []);
+  const tab = useRef(false);
 
   useEffect(() => {
     props.updatePage({
@@ -45,12 +42,19 @@ const EditableBlock = (props) => {
         });
       }
     }
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      tab.current = true;
+      console.log('tab');
+    }
     previousKey.current = e.key;
   };
 
   return (
     <ContentEditable
-      className='p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none'
+      className={clsx(
+        'w-full p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none'
+      )}
       innerRef={contentEditable}
       html={html.current}
       tagName={tag.current}
