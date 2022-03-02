@@ -1,48 +1,87 @@
-import { useState } from 'react';
-import { useFormik } from 'formik';
-import { openai } from '../lib';
+import { useEffect, useState } from 'react';
+import EditableBlock from '../components/editableBlock';
+
+const uid = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
+
+const setCaretToEnd = (element) => {
+  const range = document.createRange();
+  const selection = window.getSelection();
+  range.selectNodeContents(element);
+  range.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(range);
+  element.focus();
+};
+
+const initialBlock = { id: uid(), html: '', tag: 'p' };
 
 const Home = () => {
-  const [qs, setQs] = useState([]);
-  const formik = useFormik({
-    initialValues: {
-      context: '',
-    },
-    onSubmit: async ({ context }) => {
-      try {
-        const response = await openai.createCompletion('text-davinci-001', {
-          prompt: `Generate questions and answers:${context}`,
-          temperature: 0.9, // randomness of the response -- level of unpredicability
-          max_tokens: 100, // number of words returned
-          top_p: 1,
-          frequency_penalty: 0,
-          presence_penalty: 0,
-        });
-        const text = response.data.choices[0].text;
-        const strs = text.split('\n').filter((s) => s.length);
-        setQs(strs);
-      } catch (err) {
-        console.log(err);
-      }
-    },
-  });
+  const [blocks, setBlocks] = useState([initialBlock]);
+  const [currentBlock, setCurrentBlock] = useState(null);
+  const [previousBlock, setPreviousBlock] = useState(null);
+  const [isAddBlock, setIsAddBlock] = useState(false);
+
+  useEffect(() => {
+    if (isAddBlock) {
+      if (!currentBlock) return;
+      currentBlock.ref.nextElementSibling.focus();
+    } else {
+      if (!previousBlock) return;
+      setCaretToEnd(previousBlock);
+      previousBlock.focus();
+    }
+  }, [blocks, isAddBlock, currentBlock, previousBlock]);
+
+  const updatePageHandler = (updatedBlock) => {
+    const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
+    const updatedBlocks = [...blocks];
+    updatedBlocks[index] = {
+      ...updatedBlocks[index],
+      tag: updatedBlock.tag,
+      html: updatedBlock.html,
+    };
+    setBlocks(updatedBlocks);
+  };
+
+  const addBlockHandler = (currentBlock) => {
+    setIsAddBlock(true);
+    setCurrentBlock(currentBlock);
+    const newBlock = { id: uid(), html: '', tag: 'p' };
+    const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
+    const updatedBlocks = [...blocks];
+    updatedBlocks.splice(index + 1, 0, newBlock);
+    setBlocks(updatedBlocks);
+  };
+
+  const deleteBlockHandler = (currentBlock) => {
+    setIsAddBlock(false);
+    const prev = currentBlock.ref.previousElementSibling;
+    if (prev) {
+      setPreviousBlock(prev);
+      const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
+      const updatedBlocks = [...blocks];
+      updatedBlocks.splice(index, 1);
+      setBlocks(updatedBlocks);
+    }
+  };
 
   return (
-    <div className='bg-blue-200'>
-      <form onSubmit={formik.handleSubmit}>
-        <textarea
-          name='context'
-          type='text'
-          value={formik.values.context}
-          onChange={formik.handleChange}
-        />
-        <button type='submit'>submit</button>
-      </form>
-      <div>
-        {qs.map((q) => (
-          <p key={q}>{q}</p>
-        ))}
-      </div>
+    <div className='Page'>
+      {blocks.map((block, key) => {
+        return (
+          <EditableBlock
+            key={key}
+            id={block.id}
+            tag={block.tag}
+            html={block.html}
+            updatePage={updatePageHandler}
+            addBlock={addBlockHandler}
+            deleteBlock={deleteBlockHandler}
+          />
+        );
+      })}
     </div>
   );
 };
