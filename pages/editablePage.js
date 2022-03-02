@@ -1,5 +1,5 @@
 import React from 'react';
-import EditableBlock from '../lib/editableBlock';
+import EditableBlock from '../components/editableBlock';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -15,7 +15,7 @@ const setCaretToEnd = (element) => {
   element.focus();
 };
 
-const initialBlock = { id: uid(), html: "", tag: "p" };
+const initialBlock = { id: uid(), html: '', tag: 'p' };
 
 class EditablePage extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class EditablePage extends React.Component {
     this.updatePageHandler = this.updatePageHandler.bind(this);
     this.addBlockHandler = this.addBlockHandler.bind(this);
     this.deleteBlockHandler = this.deleteBlockHandler.bind(this);
-    this.state = { blocks: [initialBlock]};
+    this.state = { blocks: [initialBlock] };
   }
 
   updatePageHandler(updatedBlock) {
@@ -33,13 +33,13 @@ class EditablePage extends React.Component {
     updatedBlocks[index] = {
       ...updatedBlocks[index],
       tag: updatedBlock.tag,
-      html: updatedBlock.html
+      html: updatedBlock.html,
     };
     this.setState({ blocks: updatedBlocks });
   }
 
   addBlockHandler(currentBlock) {
-    const newBlock = { id: uid(), html: "", tag: "p" };
+    const newBlock = { id: uid(), html: '', tag: 'p' };
     const blocks = this.state.blocks;
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
     const updatedBlocks = [...blocks];
@@ -65,7 +65,7 @@ class EditablePage extends React.Component {
 
   render() {
     return (
-      <div className="Page">
+      <div className='Page'>
         {this.state.blocks.map((block, key) => {
           return (
             <EditableBlock
@@ -83,6 +83,5 @@ class EditablePage extends React.Component {
     );
   }
 }
-
 
 export default EditablePage;
