@@ -68,20 +68,22 @@ const Home = () => {
   };
 
   return (
-    <div className='Page'>
-      {blocks.map((block, key) => {
-        return (
-          <EditableBlock
-            key={key}
-            id={block.id}
-            tag={block.tag}
-            html={block.html}
-            updatePage={updatePageHandler}
-            addBlock={addBlockHandler}
-            deleteBlock={deleteBlockHandler}
-          />
-        );
-      })}
+    <div className='w-screen h-screen flex justify-center bg-[#f0f2f5]'>
+      <div className='w-[800px] flex flex-col gap-1 bg-white'>
+        {blocks.map((block, key) => {
+          return (
+            <EditableBlock
+              key={key}
+              id={block.id}
+              tag={block.tag}
+              html={block.html}
+              updatePage={updatePageHandler}
+              addBlock={addBlockHandler}
+              deleteBlock={deleteBlockHandler}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };

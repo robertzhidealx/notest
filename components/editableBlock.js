@@ -3,31 +3,30 @@ import ContentEditable from 'react-contenteditable';
 
 const EditableBlock = (props) => {
   const contentEditable = useRef(null);
-  const [html, setHtml] = useState('');
-  const [tag, setTag] = useState('p');
-  const [htmlBackup, setHtmlBackup] = useState('');
-  const [previousKey, setPreviousKey] = useState('');
+  const html = useRef('');
+  const htmlBackup = useRef('');
+  const tag = useRef('p');
+  const previousKey = useRef('');
 
   useEffect(() => {
-    setHtml(props.html);
-    setTag(props.tag);
+    html.current = props.html;
+    tag.current = props.tag;
   }, []);
 
   useEffect(() => {
     props.updatePage({
       id: props.id,
-      html,
-      tag,
+      html: html.current,
+      tag: tag.current,
     });
   }, [html, tag]);
 
   const onChangeHandler = (e) => {
-    setHtml(e.target.value);
+    html.current = e.target.value;
   };
 
   const onKeyDownHandler = (e) => {
-    console.log(html);
-    if (e.key === '/') setHtmlBackup(html);
+    if (e.key === '/') htmlBackup.current = html.current;
     if (e.key === 'Enter') {
       if (previousKey !== 'Shift') {
         e.preventDefault();
@@ -37,22 +36,24 @@ const EditableBlock = (props) => {
         });
       }
     }
-    if (e.key === 'Backspace' && !html) {
-      e.preventDefault();
-      props.deleteBlock({
-        id: props.id,
-        ref: contentEditable.current,
-      });
+    if (e.key === 'Backspace') {
+      if (html.current === '') {
+        e.preventDefault();
+        props.deleteBlock({
+          id: props.id,
+          ref: contentEditable.current,
+        });
+      }
     }
-    setPreviousKey(e.key);
+    previousKey.current = e.key;
   };
 
   return (
     <ContentEditable
-      className='Block'
+      className='p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none'
       innerRef={contentEditable}
-      html={html}
-      tagName={tag}
+      html={html.current}
+      tagName={tag.current}
       onChange={onChangeHandler}
       onKeyDown={onKeyDownHandler}
     />
