@@ -8,6 +8,11 @@ const getAll = async () => {
   return fetchWrapper.get(baseUrl, false);
 };
 
+
+const getId = async (id) => {
+  return fetchWrapper.getSpecificId(baseUrl + '/' + id);
+};
+
 const create = async (title, author, content, time, questions) => {
   return fetchWrapper
     .post(`${baseUrl}/create`, {
@@ -36,4 +41,5 @@ export const noteService = {
   getAll,
   create,
   update,
+  getId,
 };
