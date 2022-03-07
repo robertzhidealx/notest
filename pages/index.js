@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import EditableBlock from '../components/editableBlock';
+import Popup from '../components/popup';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
+
+const range = process.browser && document.createRange();
 
 const setCaretToEnd = (element) => {
   const range = document.createRange();
