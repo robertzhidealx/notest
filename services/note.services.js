@@ -1,4 +1,4 @@
-import { fetchWrapper } from '../lib';
+import { fetchWrapper, openai } from '../lib';
 import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
@@ -7,7 +7,6 @@ const baseUrl = `${publicRuntimeConfig.apiUrl}/notes`;
 const getAll = async () => {
   return fetchWrapper.get(baseUrl, false);
 };
-
 
 const getId = async (id) => {
   return fetchWrapper.getSpecificId(baseUrl + '/' + id);
@@ -37,9 +36,24 @@ const update = async (id, title, author, content, questions) => {
     .then((note) => note);
 };
 
+const generateQuestions = async (prompt, context) => {
+  const response = await openai.createCompletion('text-davinci-001', {
+    prompt: `${prompt}${context}`,
+    temperature: 0.9, // randomness of the response -- level of unpredicability
+    max_tokens: 100, // number of words returned
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+  const text = response.data.choices[0].text;
+  const strs = text.split('\n').filter((s) => s.length);
+  return strs;
+};
+
 export const noteService = {
   getAll,
   create,
   update,
   getId,
+  generateQuestions,
 };

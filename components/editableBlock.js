@@ -1,67 +1,79 @@
-import { useEffect, useRef } from 'react';
+import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import clsx from 'clsx';
 
-const EditableBlock = (props) => {
-  const contentEditable = useRef(null);
-  const html = useRef(props.html);
-  const tag = useRef(props.tag);
-  const htmlBackup = useRef('');
-  const previousKey = useRef('');
-  const tab = useRef(false);
+class EditableBlock extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onChangeHandler = this.onChangeHandler.bind(this);
+    this.contentEditable = React.createRef();
+    this.onKeyDownHandler = this.onKeyDownHandler.bind(this);
+    this.contentEditable = React.createRef();
+    this.state = {
+      htmlBackup: null,
+      html: '',
+      tag: 'p',
+      previousKey: '',
+    };
+  }
 
-  useEffect(() => {
-    props.updatePage({
-      id: props.id,
-      html: html.current,
-      tag: tag.current,
-    });
-  }, [html, tag]);
+  componentDidMount() {
+    this.setState({ html: this.props.html, tag: this.props.tag });
+  }
 
-  const onChangeHandler = (e) => {
-    html.current = e.target.value;
-  };
+  componentDidUpdate(prevProps, prevState) {
+    const htmlChanged = prevState.html !== this.state.html;
+    const tagChanged = prevState.tag !== this.state.tag;
+    if (htmlChanged || tagChanged) {
+      this.props.updatePage({
+        id: this.props.id,
+        html: this.state.html,
+        tag: this.state.tag,
+      });
+    }
+  }
 
-  const onKeyDownHandler = (e) => {
-    if (e.key === '/') htmlBackup.current = html.current;
+  onChangeHandler(e) {
+    this.setState({ html: e.target.value });
+  }
+
+  onKeyDownHandler(e) {
+    if (e.key === '/') {
+      this.setState({ htmlBackup: this.state.html });
+    }
     if (e.key === 'Enter') {
-      if (previousKey !== 'Shift') {
+      if (this.state.previousKey !== 'Shift') {
         e.preventDefault();
-        props.addBlock({
-          id: props.id,
-          ref: contentEditable.current,
+        this.props.addBlock({
+          id: this.props.id,
+          ref: this.contentEditable.current,
         });
       }
     }
-    if (e.key === 'Backspace') {
-      if (html.current === '') {
-        e.preventDefault();
-        props.deleteBlock({
-          id: props.id,
-          ref: contentEditable.current,
-        });
-      }
-    }
-    if (e.key === 'Tab') {
+    if (e.key === 'Backspace' && !this.state.html) {
       e.preventDefault();
-      tab.current = true;
-      console.log('tab');
+      this.props.deleteBlock({
+        id: this.props.id,
+        ref: this.contentEditable.current,
+      });
     }
-    previousKey.current = e.key;
-  };
+    this.setState({ previousKey: e.key });
+  }
 
-  return (
-    <ContentEditable
-      className={clsx(
-        'w-full p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none'
-      )}
-      innerRef={contentEditable}
-      html={html.current}
-      tagName={tag.current}
-      onChange={onChangeHandler}
-      onKeyDown={onKeyDownHandler}
-    />
-  );
-};
+  render() {
+    return (
+      <ContentEditable
+        className={clsx(
+          'w-full p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none'
+        )}
+        innerRef={this.contentEditable}
+        html={this.state.html}
+        tagName={this.state.tag}
+        onChange={this.onChangeHandler}
+        onKeyDown={this.onKeyDownHandler}
+      />
+    );
+  }
+}
 
 export default EditableBlock;

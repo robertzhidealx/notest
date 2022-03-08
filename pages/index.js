@@ -3,6 +3,9 @@ import EditableBlock from '../components/editableBlock';
 import Highlightable from '../components/highlightable';
 import Popup from '../components/popup';
 import ConvertedQuestion from '../components/convertedQuestion';
+import QuestionList from '../components/questionList';
+import { noteService } from '../services/note.services';
+import GeneratedQuestion from '../components/generatedQuestion';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -32,6 +35,7 @@ const Home = () => {
   const [location, setLocation] = useState({ top: 0, left: 0, height: 0 }); // location of the popup
   const [indices, setIndices] = useState([-1, -1]); // start and end indices of the highlight, left index is inclusive, right index is exclusive
   const [qs, setQs] = useState([]); // the converted questions
+  const [genQs, setGenQs] = useState([]); // the generated questions
 
   // useEffect(() => {
   //   const data = questionService.getAll();
@@ -57,6 +61,28 @@ const Home = () => {
     setPopupOpen(false);
     // const q = questionService.add(text, indices);
     setQs([...qs, <ConvertedQuestion text={text} indices={indices} />]);
+  };
+
+  // useEffect(() => {
+  //   console.log(blocks);
+  // }, [blocks]);
+
+  const handleGenerateQuestions = async () => {
+    let context = '';
+    for (const x of blocks) context += ' ' + x.html;
+    const strs = await noteService.generateQuestions(
+      'Generate questions and answers:',
+      context
+    );
+    const list = [];
+    for (const s of strs) {
+      const ans = (
+        await noteService.generateQuestions('', `${context}\n${s}`)
+      )[0];
+      // console.log(ans);
+      list.push(<GeneratedQuestion q={s} ans={ans} />);
+    }
+    setGenQs(list);
   };
 
   useEffect(() => {
@@ -131,16 +157,25 @@ const Home = () => {
             >
               convert
             </button>
-            <button className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'>
-              generate
-            </button>
           </div>
         </Popup>
       )}
-      <div className='w-[800px] text-left'>
-        <p>Converted questions:</p>
-        {qs.map((x) => x)}
-      </div>
+      <button
+        onClick={() => handleGenerateQuestions()}
+        className='px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400'
+      >
+        Generate questions
+      </button>
+      <QuestionList
+        type='Generated'
+        qs={genQs}
+        className='w-[800px] text-left mt-4 mb-2'
+      />
+      <QuestionList
+        type='Converted'
+        qs={qs}
+        className='w-[800px] text-left mt-4 mb-2'
+      />
     </div>
   );
 };

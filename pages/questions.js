@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
-import { openai } from '../lib';
+import { noteService } from '../services/note.services';
 
 const Home = () => {
   const [qs, setQs] = useState([]);
@@ -10,16 +10,7 @@ const Home = () => {
     },
     onSubmit: async ({ context }) => {
       try {
-        const response = await openai.createCompletion('text-davinci-001', {
-          prompt: `Generate questions and answers:${context}`,
-          temperature: 0.9, // randomness of the response -- level of unpredicability
-          max_tokens: 100, // number of words returned
-          top_p: 1,
-          frequency_penalty: 0,
-          presence_penalty: 0,
-        });
-        const text = response.data.choices[0].text;
-        const strs = text.split('\n').filter((s) => s.length);
+        const strs = await noteService.generateQuestions(context);
         setQs(strs);
       } catch (err) {
         console.log(err);

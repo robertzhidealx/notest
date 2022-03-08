@@ -5,7 +5,7 @@ const pending = 0;
 const correct = 1;
 const wrong = 2;
 
-const ConvertedQuestion = ({ text, indices }) => {
+const GeneratedQuestion = ({ q, ans }) => {
   const [status, setStatus] = useState(pending);
   const formik = useFormik({
     initialValues: {
@@ -16,8 +16,6 @@ const ConvertedQuestion = ({ text, indices }) => {
       else setStatus(correct);
     },
   });
-  const [l, r] = indices;
-  const ans = text.substring(l, r);
 
   return (
     <form onSubmit={formik.handleSubmit} className='flex gap-2'>
@@ -27,26 +25,24 @@ const ConvertedQuestion = ({ text, indices }) => {
       >
         check
       </button>
-      <p>
-        {text.substring(0, l)}
+      <p className='flex items-center'>
+        {q}
         <input
           type='text'
           name='answer'
           value={formik.values.answer}
           onChange={formik.handleChange}
-          style={{ width: `${(r - l) * 10}px` }}
           className={`border ${
             status === correct
               ? 'border-green-200'
               : status === wrong
               ? 'border-red-200'
               : 'border-gray-200'
-          } outline-none`}
+          } outline-none ml-2`}
         />
-        {text.substring(r)}
       </p>
     </form>
   );
 };
 
-export default ConvertedQuestion;
+export default GeneratedQuestion;
