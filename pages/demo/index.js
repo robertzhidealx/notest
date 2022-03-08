@@ -1,16 +1,14 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import ConvertedQuestion from '../../components/convertedQuestion';
 import Popup from '../../components/popup';
 
 const Demo = () => {
   const [popupOpen, setPopupOpen] = useState(false);
   const [text, setText] = useState('');
-  const [top, setTop] = useState(0);
-  const [left, setLeft] = useState(0);
-  const [height, setHeight] = useState(0);
+  const [location, setLocation] = useState({ top: 0, left: 0, height: 0 });
   const [indices, setIndices] = useState([-1, -1]);
   const [qs, setQs] = useState([]);
-  const router = useRouter();
 
   const triggerHighlight = (e) => {
     setPopupOpen(true);
@@ -23,40 +21,13 @@ const Demo = () => {
     setIndices([startOffset, endOffset]);
 
     if (!s) setPopupOpen(false);
-    const pos = range.getBoundingClientRect();
-    setTop(pos.top);
-    setLeft(pos.left);
-    setHeight(pos.height);
+    const { top, left, height } = range.getBoundingClientRect();
+    setLocation({ top, left, height });
   };
 
   const handleConvert = (e) => {
     setPopupOpen(false);
-    const [l, r] = indices;
-    setQs([
-      ...qs,
-      {
-        q: (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <p>
-              {text.substring(0, l)}
-              <input
-                type='text'
-                name='answer'
-                style={{ width: `${(r - l) * 10}px` }}
-                className='border border-gray-200 outline-none '
-              />
-              {text.substring(r)}
-            </p>
-            <button type='submit'>check</button>
-          </form>
-        ),
-        ans: text.substring(l, r),
-      },
-    ]);
+    setQs([...qs, <ConvertedQuestion text={text} indices={indices} />]);
   };
 
   return (
@@ -70,7 +41,7 @@ const Demo = () => {
         <div>adfsadfsa</div>
       </div>
       {popupOpen && (
-        <Popup top={top} left={left} height={height}>
+        <Popup top={location.top} left={location.left} height={location.height}>
           <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
             <button
               onClick={handleConvert}
@@ -85,9 +56,7 @@ const Demo = () => {
         </Popup>
       )}
       <p>Converted questions:</p>
-      {qs.map((x) => (
-        <div>{x.q}</div>
-      ))}
+      {qs.map((x) => x)}
     </>
   );
 };
