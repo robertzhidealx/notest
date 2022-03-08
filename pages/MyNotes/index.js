@@ -55,9 +55,13 @@ const MyNotes = () =>{
 
       {notes.map((note, key) => {
           return (
+            <div>
             <button onClick={() => openNote(note._id)}>
               {note.id}
             </button>
+            </div>
+            
+
           );
         })}
     </div>

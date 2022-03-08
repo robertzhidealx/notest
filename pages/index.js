@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ContentEditable from 'react-contenteditable';
 import EditableBlock from '../components/editableBlock';
 import Highlightable from '../components/highlightable';
 import Popup from '../components/popup';
@@ -25,6 +26,7 @@ const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
 
 const Home = () => {
   const [blocks, setBlocks] = useState([initialBlock]);
+  const [source, setSource] = useState('');
   const [currentBlock, setCurrentBlock] = useState(null);
   const [previousBlock, setPreviousBlock] = useState(null);
   const [isAddBlock, setIsAddBlock] = useState(false);
@@ -68,21 +70,33 @@ const Home = () => {
   // }, [blocks]);
 
   const handleGenerateQuestions = async () => {
-    let context = '';
-    for (const x of blocks) context += ' ' + x.html;
+    let context = source;
+    // let context = '';
+    // for (const x of blocks) context += ' ' + x.html;
+    // console.log(source);
     const strs = await noteService.generateQuestions(
       'Generate questions and answers:',
       context
     );
     const list = [];
+    const newBlocks = []
     for (const s of strs) {
       const ans = (
         await noteService.generateQuestions('', `${context}\n${s}`)
       )[0];
       // console.log(ans);
+      // push the solution to the notes blocks as well!
+      const newBlockQ = { id: uid(), html: s, tag: 'p' };
+      const newBlockA = { id: uid(), html: ans, tag: 'p' };
+      newBlocks.push(newBlockQ, newBlockA)
+
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
     setGenQs(list);
+
+    // update the notes as well
+    const updatedBlock = [...blocks, ...newBlocks]
+    setBlocks(updatedBlock)
   };
 
   useEffect(() => {
@@ -130,7 +144,13 @@ const Home = () => {
   };
 
   return (
-    <div className='w-screen h-screen flex flex-col items-center bg-[#f0f2f5]'>
+    <div className='space-y-4 w-screen h-screen flex flex-col items-center bg-[#f0f2f5]'>
+      <h1>Source</h1>
+      <div className='w-[800px] flex flex-col gap-1 bg-white'>
+        <textarea onChange={(e) => setSource(e.target.value)}>{source}</textarea>
+        {/* </ContentEditable> */}
+      </div>
+      <h1>Notes</h1>
       <div className='w-[800px] flex flex-col gap-1 bg-white'>
         <Highlightable handleHighlight={handleHighlight}>
           {blocks.map((block, key) => {
