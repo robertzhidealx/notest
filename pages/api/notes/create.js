@@ -23,7 +23,7 @@ const handler = async ({ body, method }, res) => {
     const db = client.db();
     const collection = db.collection('Notes');
     const count = (await collection.count()) + 1;
-    const id = formatId(title, count);
+    const id = formatId(title, count); //Change to uid function? 
     const event = {
       id,
       title,
