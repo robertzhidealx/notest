@@ -1,6 +1,6 @@
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import ConvertedQuestion from '../../components/convertedQuestion';
+import Highlightable from '../../components/highlightable';
 import Popup from '../../components/popup';
 
 const Demo = () => {
@@ -10,7 +10,7 @@ const Demo = () => {
   const [indices, setIndices] = useState([-1, -1]);
   const [qs, setQs] = useState([]);
 
-  const triggerHighlight = (e) => {
+  const handleHighlight = (e) => {
     setPopupOpen(true);
     setText(e.target.innerText);
 
@@ -32,14 +32,14 @@ const Demo = () => {
 
   return (
     <>
-      <div onMouseUp={triggerHighlight} onDoubleClick={triggerHighlight}>
+      <Highlightable handleHighlight={handleHighlight}>
         <div>hello world</div>
         <div>my name is jeff</div>
         <div>adfsadfsa</div>
         <div>adfsadfsa</div>
         <div>adfsadfsa</div>
         <div>adfsadfsa</div>
-      </div>
+      </Highlightable>
       {popupOpen && (
         <Popup top={location.top} left={location.left} height={location.height}>
           <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
