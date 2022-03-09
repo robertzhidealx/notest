@@ -7,6 +7,7 @@ import ConvertedQuestion from '../components/convertedQuestion';
 import QuestionList from '../components/questionList';
 import { noteService } from '../services/note.services';
 import GeneratedQuestion from '../components/generatedQuestion';
+import Countdown from 'react-countdown';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -27,6 +28,7 @@ const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
 const Home = () => {
   const [blocks, setBlocks] = useState([initialBlock]);
   const [source, setSource] = useState('');
+  const [showSource, setShowSource] = useState(true);
   const [testMode, setTestMode] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(null);
   const [previousBlock, setPreviousBlock] = useState(null);
@@ -76,7 +78,7 @@ const Home = () => {
     // for (const x of blocks) context += ' ' + x.html;
     // console.log(source);
     const strs = await noteService.generateQuestions(
-      'Generate questions: \n',
+      'Generate 5 questions: \n',
       context
     );
     const list = [];
@@ -148,12 +150,35 @@ const Home = () => {
 
   return (
     <div className='space-y-4 w-screen h-screen flex flex-col items-center bg-[#f0f2f5]'>
+      <Countdown></Countdown>
       <button
         onClick={() => setTestMode(!testMode)}
         className='px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400'
       >
         {testMode ? <>Return to notes mode</> : <>Test yourself!</>}
       </button>
+      <button
+        onClick={() => setShowSource(!showSource)}
+        className='px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400'
+      >
+        {showSource ? <>Hide Source</> : <>Show Source</>}
+      </button>
+      {showSource ? (
+        <>
+          <h1>Source</h1>
+          <div className='w-[800px] flex flex-col gap-1 bg-white'>
+            <textarea
+              onChange={(e) => setSource(e.target.value)}
+              class='h-[300px] resize-none rounded-md px-3
+              py-1.5 my-auto'
+              placeholder='Add source here!'
+            >
+              {source}
+            </textarea>
+            {/* </ContentEditable> */}
+          </div>
+        </>
+      ) : null}
       {testMode ? (
         <>
           <>Test mode</>
@@ -170,18 +195,6 @@ const Home = () => {
         </>
       ) : (
         <>
-          <h1>Source</h1>
-          <div className='w-[800px] flex flex-col gap-1 bg-white'>
-            <textarea
-              onChange={(e) => setSource(e.target.value)}
-              class='h-[300px] resize-none rounded-md px-3
-              py-1.5 my-auto'
-              placeholder='Add source here!'
-            >
-              {source}
-            </textarea>
-            {/* </ContentEditable> */}
-          </div>
           <h1>Notes</h1>
           <div className='w-[800px] flex flex-col gap-1 bg-white'>
             <Highlightable handleHighlight={handleHighlight}>
