@@ -1,4 +1,5 @@
 import { clientPromise } from '../../../lib/mongodb';
+import { ObjectId } from 'mongodb';
 
 const formatId = (title, count) =>
   title
@@ -38,11 +39,12 @@ const handler = async ({ body, method }, res) => {
   }
 
   async function update(body) {
+    console.log(body);
     const { id, title, author, content, questions } = body;
     const client = await clientPromise;
     const db = client.db();
     const collection = db.collection('Notes');
-    const event = (await collection.find({ id }).toArray())[0];
+    const event = (await collection.find({ _id: ObjectId(id)}).toArray())[0];
     let newId = id;
     if (title !== event.title) {
       const arr = event.id.split('-');

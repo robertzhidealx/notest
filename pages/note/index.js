@@ -27,7 +27,7 @@ const MyNotes = () =>{
   const handleSubmit = () =>{
     const date = Date.now()/1000;
     (async () => {
-      await noteService.create(name, author, [initialBlock], date, []);
+      await noteService.create(name, author, [initialBlock], date, {});
     })().then(router.reload(window.location.pathname));
   }
 
