@@ -36,10 +36,10 @@ const update = async (id, title, author, content, questions) => {
     .then((note) => note);
 };
 
-const generateQuestions = async (prompt, context) => {
+const generateQuestions = async (prompt, context, temperature) => {
   const response = await openai.createCompletion('text-davinci-001', {
     prompt: `${prompt}${context}`,
-    temperature: 0.9, // randomness of the response -- level of unpredicability
+    temperature, // randomness of the response -- level of unpredicability
     max_tokens: 100, // number of words returned
     top_p: 1,
     frequency_penalty: 0,

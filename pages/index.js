@@ -36,6 +36,7 @@ const Home = () => {
   const [indices, setIndices] = useState([-1, -1]); // start and end indices of the highlight, left index is inclusive, right index is exclusive
   const [qs, setQs] = useState([]); // the converted questions
   const [genQs, setGenQs] = useState([]); // the generated questions
+  const [doneGenerating, setDoneGenerating] = useState(true); // whether the generated questions have been generated
 
   // useEffect(() => {
   //   const data = questionService.getAll();
@@ -68,21 +69,24 @@ const Home = () => {
   // }, [blocks]);
 
   const handleGenerateQuestions = async () => {
+    setDoneGenerating(false);
     let context = '';
     for (const x of blocks) context += ' ' + x.html;
     const strs = await noteService.generateQuestions(
       'Generate questions and answers:',
-      context
+      context,
+      0.5
     );
     const list = [];
     for (const s of strs) {
       const ans = (
-        await noteService.generateQuestions('', `${context}\n${s}`)
+        await noteService.generateQuestions('', `${context}\n${s}`, 0.1)
       )[0];
       // console.log(ans);
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
     setGenQs(list);
+    setDoneGenerating(true);
   };
 
   useEffect(() => {
@@ -161,8 +165,11 @@ const Home = () => {
         </Popup>
       )}
       <button
+        disabled={!doneGenerating}
         onClick={() => handleGenerateQuestions()}
-        className='px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400'
+        className={`px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400 ${
+          !doneGenerating && 'cursor-not-allowed'
+        }`}
       >
         Generate questions
       </button>

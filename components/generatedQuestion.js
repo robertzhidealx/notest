@@ -41,6 +41,7 @@ const GeneratedQuestion = ({ q, ans }) => {
           } outline-none ml-2`}
         />
       </p>
+      {status === wrong && <p>{ans}</p>}
     </form>
   );
 };
