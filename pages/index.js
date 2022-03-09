@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ContentEditable from 'react-contenteditable';
 import EditableBlock from '../components/editableBlock';
 import Highlightable from '../components/highlightable';
 import Popup from '../components/popup';
@@ -25,6 +26,8 @@ const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
 
 const Home = () => {
   const [blocks, setBlocks] = useState([initialBlock]);
+  const [source, setSource] = useState('');
+  const [testMode, setTestMode] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(null);
   const [previousBlock, setPreviousBlock] = useState(null);
   const [isAddBlock, setIsAddBlock] = useState(false);
@@ -70,23 +73,35 @@ const Home = () => {
 
   const handleGenerateQuestions = async () => {
     setDoneGenerating(false);
-    let context = '';
-    for (const x of blocks) context += ' ' + x.html;
+    let context = source;
+    // let context = '';
+    // for (const x of blocks) context += ' ' + x.html;
+    // console.log(source);
     const strs = await noteService.generateQuestions(
-      'Generate questions and answers:',
-      context,
-      0.5
+      'Generate questions: \n',
+      context
     );
     const list = [];
+    const newBlocks = [];
     for (const s of strs) {
       const ans = (
         await noteService.generateQuestions('', `${context}\n${s}`, 0.1)
       )[0];
-      // console.log(ans);
+
+      // for debugging purposes
+      console.log(s, ans);
+      // push the solution to the notes blocks as well!
+      const newBlockQ = { id: uid(), html: s, tag: 'p' };
+      const newBlockA = { id: uid(), html: ans, tag: 'p' };
+      newBlocks.push(newBlockQ, newBlockA);
+
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
     setGenQs(list);
-    setDoneGenerating(true);
+
+    // update the notes as well
+    const updatedBlock = [...blocks, ...newBlocks];
+    setBlocks(updatedBlock);
   };
 
   useEffect(() => {
@@ -134,55 +149,86 @@ const Home = () => {
   };
 
   return (
-    <div className='w-screen h-screen flex flex-col items-center bg-[#f0f2f5]'>
-      <div className='w-[800px] flex flex-col gap-1 bg-white'>
-        <Highlightable handleHighlight={handleHighlight}>
-          {blocks.map((block, key) => {
-            return (
-              <EditableBlock
-                key={key}
-                id={block.id}
-                tag={block.tag}
-                html={block.html}
-                updatePage={updatePageHandler}
-                addBlock={addBlockHandler}
-                deleteBlock={deleteBlockHandler}
-              />
-            );
-          })}
-        </Highlightable>
-      </div>
-      {popupOpen && (
-        <Popup top={location.top} left={location.left} height={location.height}>
-          <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
-            <button
-              onClick={handleConvert}
-              className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'
-            >
-              convert
-            </button>
-          </div>
-        </Popup>
-      )}
+    <div className='space-y-4 w-screen h-screen flex flex-col items-center bg-[#f0f2f5]'>
       <button
-        disabled={!doneGenerating}
-        onClick={() => handleGenerateQuestions()}
-        className={`px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400 ${
-          !doneGenerating && 'cursor-not-allowed'
-        }`}
+        onClick={() => setTestMode(!testMode)}
+        className='px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400'
       >
-        Generate questions
+        {testMode ? <>Return to notes mode</> : <>Test yourself!</>}
       </button>
-      <QuestionList
-        type='Generated'
-        qs={genQs}
-        className='w-[800px] text-left mt-4 mb-2'
-      />
-      <QuestionList
-        type='Converted'
-        qs={qs}
-        className='w-[800px] text-left mt-4 mb-2'
-      />
+      {testMode ? (
+        <>
+          <>Test mode</>
+          <QuestionList
+            type='Generated'
+            qs={genQs}
+            className='w-[800px] text-left mt-4 mb-2'
+          />
+          <QuestionList
+            type='Converted'
+            qs={qs}
+            className='w-[800px] text-left mt-4 mb-2'
+          />
+        </>
+      ) : (
+        <>
+          <h1>Source</h1>
+          <div className='w-[800px] flex flex-col gap-1 bg-white'>
+            <textarea
+              onChange={(e) => setSource(e.target.value)}
+              class='h-[300px] resize-none rounded-md px-3
+              py-1.5 my-auto'
+              placeholder='Add source here!'
+            >
+              {source}
+            </textarea>
+            {/* </ContentEditable> */}
+          </div>
+          <h1>Notes</h1>
+          <div className='w-[800px] flex flex-col gap-1 bg-white'>
+            <Highlightable handleHighlight={handleHighlight}>
+              {blocks.map((block, key) => {
+                return (
+                  <EditableBlock
+                    key={key}
+                    id={block.id}
+                    tag={block.tag}
+                    html={block.html}
+                    updatePage={updatePageHandler}
+                    addBlock={addBlockHandler}
+                    deleteBlock={deleteBlockHandler}
+                  />
+                );
+              })}
+            </Highlightable>
+          </div>
+          {popupOpen && (
+            <Popup
+              top={location.top}
+              left={location.left}
+              height={location.height}
+            >
+              <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
+                <button
+                  onClick={handleConvert}
+                  className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'
+                >
+                  convert
+                </button>
+              </div>
+            </Popup>
+          )}
+          <button
+            disabled={!doneGenerating}
+            onClick={() => handleGenerateQuestions()}
+            className={`px-1 mt-4 mb-2 transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400 ${
+              !doneGenerating ? 'cursor-not-allowed' : ''
+            }`}
+          >
+            Generate questions
+          </button>
+        </>
+      )}
     </div>
   );
 };
