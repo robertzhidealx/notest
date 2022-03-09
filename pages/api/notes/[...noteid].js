@@ -14,7 +14,7 @@ export default async (req, res) => {
   async function getNote(id) {
     const client = await clientPromise;
     const db = client.db();
-    const note = await db.collection('Notes').findOne({_id: new ObjectId(id)});
+    const note = await db.collection('Notes').findOne({_id: ObjectId(id[0])});
     return res.status(200).json({note});
   }
 };
