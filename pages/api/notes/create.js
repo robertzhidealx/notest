@@ -39,23 +39,22 @@ const handler = async ({ body, method }, res) => {
   }
 
   async function update(body) {
-    console.log(body);
     const { id, title, author, content, questions } = body;
     const client = await clientPromise;
     const db = client.db();
     const collection = db.collection('Notes');
     const event = (await collection.find({ _id: ObjectId(id)}).toArray())[0];
-    let newId = id;
+    console.log(event);
+    //let newId = id;
     if (title !== event.title) {
       const arr = event.id.split('-');
       const serial = arr[arr.length - 1];
       newId = formatId(title, serial);
     }
     const response = await collection.updateOne(
-      { id },
+      { _id: ObjectId(id) },
       {
         $set: {
-          id: newId,
           title,
           author,
           content,
@@ -63,7 +62,6 @@ const handler = async ({ body, method }, res) => {
         },
       }
     );
-
     return res.status(200).json(response);
   }
 };

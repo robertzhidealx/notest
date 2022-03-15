@@ -21,13 +21,13 @@ const MyNotes = () =>{
   });
 
   const openNote = noteId => {
-    router.push('/MyNotes/' + noteId)
+    router.push('/note/' + noteId)
   }
 
   const handleSubmit = () =>{
     const date = Date.now()/1000;
     (async () => {
-      await noteService.create(name, author, [initialBlock], date, {});
+      await noteService.create(name, author, [initialBlock], date, {generated: [], converted: []});
     })().then(router.reload(window.location.pathname));
   }
 

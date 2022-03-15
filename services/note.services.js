@@ -9,7 +9,7 @@ const getAll = async () => {
 };
 
 const getId = async (id) => {
-  return fetchWrapper.getSpecificId(baseUrl + '/' + id);
+  return fetchWrapper.get(baseUrl + '/' + id);
 };
 
 const create = async (title, author, content, time, questions) => {
