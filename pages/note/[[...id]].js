@@ -50,15 +50,15 @@ const Note = () => {
   const [genQs, setGenQs] = useState([]); // the generated questions
   const [doneGenerating, setDoneGenerating] = useState(true); // whether the generated questions have been generated
   const [showSource, setShowSource] = useState(false);
-  const [qObject, setqObject] = useState(initialQObject)
+  const [qObject, setqObject] = useState(initialQObject);
 
   useEffect(() => {
     (async () => {
       if (!router.query.id) return;
       const res = await noteService.getId(router.query.id[0]);
-      setNoteObj(res.note);
-      setBlocks(res.note.content);
       setqObject(res.note.questions);
+      setBlocks(res.note.content);
+      setNoteObj(res.note);
       const generated = [];
       const converted = [];
       res.note.questions.generated.forEach(element => {
@@ -88,9 +88,13 @@ const Note = () => {
   };
 
   const handleConvert = (e) => {
+    const convertedQData = qObject.converted;
     setPopupOpen(false);
     // const q = questionService.add(text, indices);
+    convertedQData.push({text: text, indices: indices});
     setQs([...qs, <ConvertedQuestion text={text} indices={indices} />]);
+    noteService.update(noteObj._id, noteObj.title, noteObj.author, blocks, {generated: qObject.generated, converted: convertedQData});
+    setqObject({generated: qObject.generated, converted: convertedQData});
   };
 
   const handleGenerateQuestions = async () => {
@@ -147,6 +151,7 @@ const Note = () => {
       html: updatedBlock.html,
     };
     setBlocks(updatedBlocks);
+    console.log(updatedBlocks);
     if(typeof noteObj._id != 'undefined'){
       noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
     }
