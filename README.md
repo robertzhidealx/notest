@@ -10,6 +10,8 @@ NEXT_PUBLIC_OPENAI_API_KEY=
 
 You can obtain your API key at https://beta.openai.com/account/api-keys
 
+You would also need to obtain the MongoDB URI and paste it in the env file in order to develop locally. **For those simply wanting to view the latest deployment, simply go to http://notest-hyper.vercel.app.**
+
 ## Getting Started
 
 First, run the development server:
