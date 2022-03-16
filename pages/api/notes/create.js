@@ -45,6 +45,7 @@ const handler = async ({ body, method }, res) => {
     const db = client.db();
     const collection = db.collection('Notes');
     const event = (await collection.find({ _id: ObjectId(id)}).toArray())[0];
+    console.log(event);
     let newId = id;
     if (title !== event.title) {
       const arr = event.id.split('-');
@@ -52,7 +53,7 @@ const handler = async ({ body, method }, res) => {
       newId = formatId(title, serial);
     }
     const response = await collection.updateOne(
-      { id },
+      { _id: ObjectId(id) },
       {
         $set: {
           id: newId,

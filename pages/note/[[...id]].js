@@ -27,6 +27,8 @@ const setCaretToEnd = (element) => {
 };
 
 const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
+const initialQObject = {generated: [], converted: []};
+
 
 const Note = () => {
   const router = useRouter();
@@ -48,6 +50,7 @@ const Note = () => {
   const [genQs, setGenQs] = useState([]); // the generated questions
   const [doneGenerating, setDoneGenerating] = useState(true); // whether the generated questions have been generated
   const [showSource, setShowSource] = useState(false);
+  const [qObject, setqObject] = useState(initialQObject)
 
   useEffect(() => {
     (async () => {
@@ -55,6 +58,17 @@ const Note = () => {
       const res = await noteService.getId(router.query.id[0]);
       setNoteObj(res.note);
       setBlocks(res.note.content);
+      setqObject(res.note.questions);
+      const generated = [];
+      const converted = [];
+      res.note.questions.generated.forEach(element => {
+        generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
+      });
+      res.note.questions.converted.forEach(element => {
+        converted.push(<ConvertedQuestion text={element.text} indices={element.indices} />);
+      });
+      setGenQs(generated);
+      setQs(converted);
     })();
   }, [router.query.id]);
 
@@ -87,6 +101,10 @@ const Note = () => {
       context
     );
     const list = [];
+    const generatedData = qObject.generated;
+    generatedData.forEach(element => {
+      list.push(<GeneratedQuestion q={element.q} ans={element.ans} />)
+    });
     const newBlocks = [];
     for (const s of strs) {
       const ans = (
@@ -97,14 +115,15 @@ const Note = () => {
       const newBlockQ = { id: uid(), html: s, tag: 'p' };
       const newBlockA = { id: uid(), html: ans, tag: 'p' };
       newBlocks.push(newBlockQ, newBlockA);
-
+      generatedData.push({q: s, ans: ans});
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
-    setGenQs(list);
-
+    setqObject({generated: generatedData, converted: qObject.converted});
     // update the notes as well
     const updatedBlock = [...blocks, ...newBlocks];
     setBlocks(updatedBlock);
+    await noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlock, {generated: generatedData, converted: qObject.converted});
+    setGenQs(list);
     setDoneGenerating(true);
   };
 
@@ -119,7 +138,7 @@ const Note = () => {
     }
   }, [blocks, isAddBlock, currentBlock, previousBlock]);
 
-  const updatePageHandler = (updatedBlock) => {
+  const updatePageHandler = async(updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
     const updatedBlocks = [...blocks];
     updatedBlocks[index] = {
@@ -128,9 +147,12 @@ const Note = () => {
       html: updatedBlock.html,
     };
     setBlocks(updatedBlocks);
+    if(typeof noteObj._id != 'undefined'){
+      noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
+    }
   };
 
-  const addBlockHandler = (currentBlock) => {
+  const addBlockHandler = async(currentBlock) => {
     setIsAddBlock(true);
     setCurrentBlock(currentBlock);
     const newBlock = { id: uid(), html: '', tag: 'p' };
@@ -138,9 +160,10 @@ const Note = () => {
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
     setBlocks(updatedBlocks);
+    noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
   };
 
-  const deleteBlockHandler = (currentBlock) => {
+  const deleteBlockHandler = async(currentBlock) => {
     setIsAddBlock(false);
     const prev = currentBlock.ref.previousElementSibling;
     if (prev) {
@@ -149,6 +172,7 @@ const Note = () => {
       const updatedBlocks = [...blocks];
       updatedBlocks.splice(index, 1);
       setBlocks(updatedBlocks);
+      noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
     }
   };
 

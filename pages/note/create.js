@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { noteService } from '../../services/note.services';
 import { useRouter } from 'next/router';
 
+const uid = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
+
+const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
+
+
 const MyNotes = () => {
   const [name, setName] = useState('');
   const [author, setAuthor] = useState('');
@@ -10,7 +17,7 @@ const MyNotes = () => {
   const handleSubmit = () => {
     const date = Date.now() / 1000;
     (async () => {
-      await noteService.create(name, author, [initialBlock], date, {});
+      await noteService.create(name, author, [initialBlock], date, {generated: [], converted: []});
     })().then(router.reload(window.location.pathname));
   };
 
