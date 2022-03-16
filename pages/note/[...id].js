@@ -50,6 +50,7 @@ const Home = () => {
     const res = await noteService.getId(router.query.id);
     setNoteObj(res.note);
     setBlocks(res.note.content);
+    //UPDATED STUFF
     setqObject(res.note.questions);
     const generated = [];
     const converted = [];
@@ -61,7 +62,6 @@ const Home = () => {
     });
     setGenQs(generated);
     setQs(converted);
-    console.log(noteObj);
   }
 
   useEffect(() => {
@@ -89,11 +89,13 @@ const Home = () => {
   };
 
   const handleConvert = (e) => {
+    //UPDATED STUFF
     const convertedQData = qObject.converted;
     setPopupOpen(false);
     // const q = questionService.add(text, indices);
     convertedQData.push({text: text, indices: indices});
     setQs([...qs, <ConvertedQuestion text={text} indices={indices} />]);
+    //UPDATED STUFF
     noteService.update(noteObj._id, noteObj.title, noteObj.author, blocks, {generated: qObject.generated, converted: convertedQData});
     setqObject({generated: qObject.generated, converted: convertedQData});
   };
@@ -113,6 +115,7 @@ const Home = () => {
       context
     );
     const list = [];
+    //UPDATED STUFF
     const generatedData = qObject.generated;
     generatedData.forEach(element => {
       list.push(<GeneratedQuestion q={element.q} ans={element.ans} />)
@@ -124,16 +127,17 @@ const Home = () => {
       )[0];
 
       // for debugging purposes
-      console.log(s, ans);
+      //console.log(s, ans);
       // push the solution to the notes blocks as well!
       const newBlockQ = { id: uid(), html: s, tag: 'p' };
       const newBlockA = { id: uid(), html: ans, tag: 'p' };
       newBlocks.push(newBlockQ, newBlockA);
+      //UPDATED STUFF
       generatedData.push({q: s, ans: ans});
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
     setqObject({generated: generatedData, converted: qObject.converted});
-    //UPDATED STUFF HERE  
+    //UPDATED STUFF  
     // update the notes as well
     const updatedBlock = [...blocks, ...newBlocks];
     setBlocks(updatedBlock);
@@ -152,7 +156,7 @@ const Home = () => {
     }
   }, [blocks, isAddBlock, currentBlock, previousBlock]);
 
-  const updatePageHandler = (updatedBlock) => {
+  const updatePageHandler = async(updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
     const updatedBlocks = [...blocks];
     updatedBlocks[index] = {
@@ -161,9 +165,13 @@ const Home = () => {
       html: updatedBlock.html,
     };
     setBlocks(updatedBlocks);
+    //UPDATED STUFF
+    if(typeof noteObj._id != 'undefined'){
+      noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
+    }
   };
 
-  const addBlockHandler = (currentBlock) => {
+  const addBlockHandler = async(currentBlock) => {
     setIsAddBlock(true);
     setCurrentBlock(currentBlock);
     const newBlock = { id: uid(), html: '', tag: 'p' };
@@ -171,9 +179,12 @@ const Home = () => {
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
     setBlocks(updatedBlocks);
+    //UPDATED STUFF
+    noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
+    
   };
 
-  const deleteBlockHandler = (currentBlock) => {
+  const deleteBlockHandler = async(currentBlock) => {
     setIsAddBlock(false);
     const prev = currentBlock.ref.previousElementSibling;
     if (prev) {
@@ -182,6 +193,8 @@ const Home = () => {
       const updatedBlocks = [...blocks];
       updatedBlocks.splice(index, 1);
       setBlocks(updatedBlocks);
+      //UPDATED STUFF
+      noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
     }
   };
 
