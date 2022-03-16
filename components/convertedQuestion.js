@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
+import { CheckIcon } from '@heroicons/react/outline';
 
 const pending = 0;
 const correct = 1;
@@ -20,12 +21,12 @@ const ConvertedQuestion = ({ text, indices }) => {
   const ans = text.substring(l, r);
 
   return (
-    <form onSubmit={formik.handleSubmit} className='flex gap-2'>
+    <form onSubmit={formik.handleSubmit} className='flex gap-2 text-sm'>
       <button
-        className='px-1 text-sm transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400'
+        className='transition-colors duration-150 ease-in hover:text-slate-400'
         type='submit'
       >
-        check
+        <CheckIcon className='w-5 h-5' />
       </button>
       <p>
         {text.substring(0, l)}

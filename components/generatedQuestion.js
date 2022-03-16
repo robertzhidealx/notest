@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
+import { CheckIcon } from '@heroicons/react/outline';
 
 const pending = 0;
 const correct = 1;
@@ -18,30 +19,34 @@ const GeneratedQuestion = ({ q, ans }) => {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} className='flex gap-2'>
-      <button
-        className='px-1 text-sm transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md hover:shadow-md shadow-cyan-400'
-        type='submit'
-      >
-        check
-      </button>
-      <p className='flex items-center'>
-        {q}
-        <input
-          type='text'
-          name='answer'
-          value={formik.values.answer}
-          onChange={formik.handleChange}
-          className={`border ${
-            status === correct
-              ? 'border-green-200'
-              : status === wrong
-              ? 'border-red-200'
-              : 'border-gray-200'
-          } outline-none ml-2`}
-        />
-      </p>
-      {status === wrong && <p>{ans}</p>}
+    <form onSubmit={formik.handleSubmit} className='flex gap-2 text-sm'>
+      <div className='flex-col justify-center'>
+        <div className='mb-1'>{q}</div>
+        <div className='ml-4'>
+          <div className='flex items-center'>
+            <input
+              type='text'
+              name='answer'
+              value={formik.values.answer}
+              onChange={formik.handleChange}
+              className={`border ${
+                status === correct
+                  ? 'border-green-200'
+                  : status === wrong
+                  ? 'border-red-200'
+                  : 'border-gray-200'
+              } outline-none mr-2`}
+            />
+            <button
+              className='transition-colors duration-150 ease-in hover:text-slate-400'
+              type='submit'
+            >
+              <CheckIcon className='w-5 h-5' />
+            </button>
+          </div>
+          {status === wrong && <p>{ans}</p>}
+        </div>
+      </div>
     </form>
   );
 };
