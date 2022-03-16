@@ -21,7 +21,7 @@ const Sidebar = () => {
         <h2 className='font-medium '>Notes</h2>
         <button
           className='hidden group-hover:block'
-          onClick={() => router.push('/note')}
+          onClick={() => router.push('/note/create')}
         >
           <PlusIcon className='w-4 h-4' />
         </button>

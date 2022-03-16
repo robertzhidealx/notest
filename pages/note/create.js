@@ -1,25 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { noteService } from '../../services/note.services';
 import { useRouter } from 'next/router';
 
-const uid = () => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
-
-const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
-
 const MyNotes = () => {
-  const [notes, setNotes] = useState([]);
   const [name, setName] = useState('');
   const [author, setAuthor] = useState('');
   const router = useRouter();
-
-  useEffect(() => {
-    (async () => {
-      const res = await noteService.getAll();
-      setNotes(res);
-    })();
-  }, []);
 
   const handleSubmit = () => {
     const date = Date.now() / 1000;
@@ -46,15 +32,6 @@ const MyNotes = () => {
         />
         <button>Add Note</button>
       </form>
-      {notes.map((note, key) => {
-        return (
-          <div key={key}>
-            <button onClick={() => router.push(`/note/${note._id}`)}>
-              {note.id}
-            </button>
-          </div>
-        );
-      })}
     </div>
   );
 };
