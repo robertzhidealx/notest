@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { PlusIcon } from '@heroicons/react/solid';
+import clsx from 'clsx';
 import { noteService } from '../services/note.services';
 
-const Sidebar = () => {
+const Sidebar = ({ current }) => {
   const [notes, setNotes] = useState([]);
   const router = useRouter();
 
@@ -31,7 +32,10 @@ const Sidebar = () => {
           <button
             key={key}
             onClick={() => router.push(`/note/${note._id}`)}
-            className='w-full px-3 text-left transition-colors duration-150 ease-in h-7 hover:bg-slate-200'
+            className={clsx(
+              'w-full px-3 text-left transition-colors duration-150 ease-in h-7 hover:bg-slate-200 truncate',
+              { 'bg-slate-200': note._id === current[0] }
+            )}
           >
             {note.id}
           </button>

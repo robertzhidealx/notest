@@ -154,7 +154,7 @@ const Note = () => {
 
   return (
     <div className='flex'>
-      <Sidebar />
+      <Sidebar current={router.query.id} />
       <div className='min-h-screen flex flex-col items-center bg-[#f0f2f5] px-8 py-6 w-full'>
         <div className='flex items-center self-start justify-center h-8 px-1 mb-4 rounded-md bg-slate-200'>
           <button
