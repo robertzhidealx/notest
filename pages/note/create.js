@@ -8,7 +8,6 @@ const uid = () => {
 
 const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
 
-
 const MyNotes = () => {
   const [name, setName] = useState('');
   const [author, setAuthor] = useState('');
@@ -17,8 +16,11 @@ const MyNotes = () => {
   const handleSubmit = () => {
     const date = Date.now() / 1000;
     (async () => {
-      await noteService.create(name, author, [initialBlock], date, {generated: [], converted: []});
-    })().then(router.push(window.location.href = `/note`));
+      await noteService.create(name, author, [initialBlock], date, {
+        generated: [],
+        converted: [],
+      });
+    })().then(router.push('/note'));
   };
 
   return (

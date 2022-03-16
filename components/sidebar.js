@@ -32,7 +32,8 @@ const Sidebar = ({ current }) => {
           <button
             key={key}
             onClick={() => {
-              router.push(`/note/${note._id}`);
+              window.location.href = `/note/${note._id}`;
+              // router.push(`/note/${note._id}`);
             }}
             className={clsx(
               'w-full px-3 text-left transition-colors duration-150 ease-in h-7 hover:bg-slate-200 truncate',

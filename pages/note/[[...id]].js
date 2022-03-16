@@ -162,7 +162,7 @@ const Note = () => {
     };
     setBlocks(updatedBlocks);
     // console.log(updatedBlocks);
-    if (typeof noteObj._id != 'undefined') {
+    if (typeof noteObj._id !== 'undefined') {
       noteService.update(
         noteObj._id,
         noteObj.title,
