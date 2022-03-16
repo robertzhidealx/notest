@@ -11,7 +11,7 @@ const QuestionList = ({ type, qs }) => {
         className={clsx('flex items-center justify-between', { 'mb-2': show })}
         onClick={() => setShow((show) => !show)}
       >
-        <h1 className='font-semibold'>{`${type} questions`}</h1>
+        <h1 className='font-medium'>{`${type} questions`}</h1>
         {show ? (
           <ChevronDownIcon className='w-5 h-5' />
         ) : (
@@ -24,7 +24,7 @@ const QuestionList = ({ type, qs }) => {
             qs.map((x) => x)
           ) : (
             <div className='text-sm italic text-center text-slate-400'>
-              No questions yet...
+              Nothing yet...
             </div>
           )}
         </div>

@@ -13,16 +13,13 @@ const MyNotes = () => {
   const [name, setName] = useState('');
   const [author, setAuthor] = useState('');
   const router = useRouter();
+
   useEffect(() => {
     (async () => {
       const res = await noteService.getAll();
       setNotes(res);
     })();
-  });
-
-  const openNote = (noteId) => {
-    router.push('/note/' + noteId);
-  };
+  }, []);
 
   const handleSubmit = () => {
     const date = Date.now() / 1000;
@@ -51,8 +48,10 @@ const MyNotes = () => {
       </form>
       {notes.map((note, key) => {
         return (
-          <div>
-            <button onClick={() => openNote(note._id)}>{note.id}</button>
+          <div key={key}>
+            <button onClick={() => router.push(`/note/${note._id}`)}>
+              {note.id}
+            </button>
           </div>
         );
       })}
