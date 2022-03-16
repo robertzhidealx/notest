@@ -20,7 +20,7 @@ const MyNotes = () => {
         generated: [],
         converted: [],
       });
-    })().then(router.push('/note'));
+    })().then(router.push(window.location.href = `/note`));
   };
 
   return (
