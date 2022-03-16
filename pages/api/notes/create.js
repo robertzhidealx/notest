@@ -24,7 +24,7 @@ const handler = async ({ body, method }, res) => {
     const db = client.db();
     const collection = db.collection('Notes');
     const count = (await collection.count()) + 1;
-    const id = formatId(title, count); //Change to uid function? 
+    const id = formatId(title, count); //Change to uid function?
     const event = {
       id,
       title,
@@ -43,8 +43,8 @@ const handler = async ({ body, method }, res) => {
     const client = await clientPromise;
     const db = client.db();
     const collection = db.collection('Notes');
-    const event = (await collection.find({ _id: ObjectId(id)}).toArray())[0];
-    console.log(event);
+    const event = (await collection.find({ _id: ObjectId(id) }).toArray())[0];
+    // console.log(event);
     let newId = id;
     if (title !== event.title) {
       const arr = event.id.split('-');

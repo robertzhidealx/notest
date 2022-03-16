@@ -27,8 +27,7 @@ const setCaretToEnd = (element) => {
 };
 
 const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
-const initialQObject = {generated: [], converted: []};
-
+const initialQObject = { generated: [], converted: [] };
 
 const Note = () => {
   const router = useRouter();
@@ -61,11 +60,13 @@ const Note = () => {
       setNoteObj(res.note);
       const generated = [];
       const converted = [];
-      res.note.questions.generated.forEach(element => {
+      res.note.questions.generated.forEach((element) => {
         generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
       });
-      res.note.questions.converted.forEach(element => {
-        converted.push(<ConvertedQuestion text={element.text} indices={element.indices} />);
+      res.note.questions.converted.forEach((element) => {
+        converted.push(
+          <ConvertedQuestion text={element.text} indices={element.indices} />
+        );
       });
       setGenQs(generated);
       setQs(converted);
@@ -91,13 +92,16 @@ const Note = () => {
     const convertedQData = qObject.converted;
     setPopupOpen(false);
     // const q = questionService.add(text, indices);
-    convertedQData.push({text: text, indices: indices});
+    convertedQData.push({ text: text, indices: indices });
     setQs([...qs, <ConvertedQuestion text={text} indices={indices} />]);
-    noteService.update(noteObj._id, noteObj.title, noteObj.author, blocks, {generated: qObject.generated, converted: convertedQData});
-    setqObject({generated: qObject.generated, converted: convertedQData});
+    noteService.update(noteObj._id, noteObj.title, noteObj.author, blocks, {
+      generated: qObject.generated,
+      converted: convertedQData,
+    });
+    setqObject({ generated: qObject.generated, converted: convertedQData });
   };
 
-  const handleGenerateQuestions = async () => {
+  const handleGenerateQuestions = async (temperature) => {
     setDoneGenerating(false);
     let context = source;
     const strs = await noteService.generateQuestions(
@@ -106,27 +110,33 @@ const Note = () => {
     );
     const list = [];
     const generatedData = qObject.generated;
-    generatedData.forEach(element => {
-      list.push(<GeneratedQuestion q={element.q} ans={element.ans} />)
+    generatedData.forEach((element) => {
+      list.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
     });
     const newBlocks = [];
     for (const s of strs) {
       const ans = (
-        await noteService.generateQuestions('', `${context}\n${s}`, 0.1)
+        await noteService.generateQuestions('', `${context}\n${s}`, temperature)
       )[0];
 
       // push the solution to the notes blocks as well!
       const newBlockQ = { id: uid(), html: s, tag: 'p' };
       const newBlockA = { id: uid(), html: ans, tag: 'p' };
       newBlocks.push(newBlockQ, newBlockA);
-      generatedData.push({q: s, ans: ans});
+      generatedData.push({ q: s, ans: ans });
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
-    setqObject({generated: generatedData, converted: qObject.converted});
+    setqObject({ generated: generatedData, converted: qObject.converted });
     // update the notes as well
     const updatedBlock = [...blocks, ...newBlocks];
     setBlocks(updatedBlock);
-    await noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlock, {generated: generatedData, converted: qObject.converted});
+    await noteService.update(
+      noteObj._id,
+      noteObj.title,
+      noteObj.author,
+      updatedBlock,
+      { generated: generatedData, converted: qObject.converted }
+    );
     setGenQs(list);
     setDoneGenerating(true);
   };
@@ -142,7 +152,7 @@ const Note = () => {
     }
   }, [blocks, isAddBlock, currentBlock, previousBlock]);
 
-  const updatePageHandler = async(updatedBlock) => {
+  const updatePageHandler = async (updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
     const updatedBlocks = [...blocks];
     updatedBlocks[index] = {
@@ -151,13 +161,19 @@ const Note = () => {
       html: updatedBlock.html,
     };
     setBlocks(updatedBlocks);
-    console.log(updatedBlocks);
-    if(typeof noteObj._id != 'undefined'){
-      noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
+    // console.log(updatedBlocks);
+    if (typeof noteObj._id != 'undefined') {
+      noteService.update(
+        noteObj._id,
+        noteObj.title,
+        noteObj.author,
+        updatedBlocks,
+        { generated: qObject.generated, converted: qObject.converted }
+      );
     }
   };
 
-  const addBlockHandler = async(currentBlock) => {
+  const addBlockHandler = async (currentBlock) => {
     setIsAddBlock(true);
     setCurrentBlock(currentBlock);
     const newBlock = { id: uid(), html: '', tag: 'p' };
@@ -165,10 +181,16 @@ const Note = () => {
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
     setBlocks(updatedBlocks);
-    noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
+    noteService.update(
+      noteObj._id,
+      noteObj.title,
+      noteObj.author,
+      updatedBlocks,
+      { generated: qObject.generated, converted: qObject.converted }
+    );
   };
 
-  const deleteBlockHandler = async(currentBlock) => {
+  const deleteBlockHandler = async (currentBlock) => {
     setIsAddBlock(false);
     const prev = currentBlock.ref.previousElementSibling;
     if (prev) {
@@ -177,7 +199,13 @@ const Note = () => {
       const updatedBlocks = [...blocks];
       updatedBlocks.splice(index, 1);
       setBlocks(updatedBlocks);
-      noteService.update(noteObj._id, noteObj.title, noteObj.author, updatedBlocks, {generated: qObject.generated, converted: qObject.converted});
+      noteService.update(
+        noteObj._id,
+        noteObj.title,
+        noteObj.author,
+        updatedBlocks,
+        { generated: qObject.generated, converted: qObject.converted }
+      );
     }
   };
 
