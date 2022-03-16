@@ -18,7 +18,7 @@ const MyNotes = () => {
     const date = Date.now() / 1000;
     (async () => {
       await noteService.create(name, author, [initialBlock], date, {generated: [], converted: []});
-    })().then(router.reload(window.location.pathname));
+    })().then(router.push(window.location.href = `/note`));
   };
 
   return (

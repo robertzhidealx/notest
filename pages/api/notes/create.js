@@ -39,7 +39,6 @@ const handler = async ({ body, method }, res) => {
   }
 
   async function update(body) {
-    console.log(body);
     const { id, title, author, content, questions } = body;
     const client = await clientPromise;
     const db = client.db();
