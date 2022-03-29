@@ -51,9 +51,16 @@ const Note = () => {
   const [showSource, setShowSource] = useState(false);
   const [qObject, setqObject] = useState(initialQObject);
 
+  const [onHomePage, setOnHomePage] = useState(false); // whether the user is on the /note route
+  const [sidebarHidden, setSidebarHidden] = useState(false); // whether the sidebar is hidden
+
   useEffect(() => {
     (async () => {
-      if (!router.query.id) return;
+      if (!router.query.id) {
+        setOnHomePage(true);
+        return;
+      }
+      setOnHomePage(false);
       const res = await noteService.getId(router.query.id[0]);
       setqObject(res.note.questions);
       setBlocks(res.note.content);
@@ -211,86 +218,99 @@ const Note = () => {
 
   return (
     <div className='flex'>
-      <Sidebar current={router.query.id} />
-      <div className='min-h-screen flex flex-col items-center bg-[#f0f2f5] px-8 py-6 w-full'>
-        <div className='flex items-center self-start justify-center h-8 px-1 mb-4 rounded-md bg-slate-200'>
-          <button
-            onClick={() => setTestMode(false)}
-            className={clsx(
-              'px-2 flex justify-center items-center text-sm h-6',
-              {
-                'bg-white rounded-md shadow-md': !testMode,
-              }
-            )}
-          >
-            Notes
-          </button>
-          <button
-            onClick={() => setTestMode(true)}
-            className={clsx(
-              'px-2 flex justify-center items-center text-sm h-6',
-              {
-                'bg-white rounded-md shadow-md': testMode,
-              }
-            )}
-          >
-            Testing
-          </button>
-        </div>
-        {testMode ? (
-          <div className='w-full'>
-            <QuestionList type='Generated' qs={genQs} />
-            <QuestionList type='Converted' qs={qs} />
-          </div>
-        ) : (
+      <Sidebar
+        current={router.query.id}
+        isHidden={sidebarHidden}
+        setIsHidden={setSidebarHidden}
+      />
+      <div
+        className={clsx(
+          'flex flex-col items-center bg-[#f0f2f5] px-8 py-2 w-full overflow-y-auto',
+          { 'ml-[200px]': !sidebarHidden }
+        )}
+      >
+        {!onHomePage && (
           <>
-            <div className='flex flex-col w-full gap-1 bg-white rounded-md'>
-              <Highlightable handleHighlight={handleHighlight}>
-                {blocks.map((block, key) => {
-                  return (
-                    <EditableBlock
-                      key={key}
-                      id={block.id}
-                      tag={block.tag}
-                      html={block.html}
-                      updatePage={updatePageHandler}
-                      addBlock={addBlockHandler}
-                      deleteBlock={deleteBlockHandler}
-                    />
-                  );
-                })}
-              </Highlightable>
-            </div>
-            {popupOpen && (
-              <Popup
-                top={location.top}
-                left={location.left}
-                height={location.height}
+            <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded-md bg-slate-200'>
+              <button
+                onClick={() => setTestMode(false)}
+                className={clsx(
+                  'px-2 flex justify-center items-center text-sm h-6',
+                  {
+                    'bg-white rounded-md shadow-md': !testMode,
+                  }
+                )}
               >
-                <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
-                  <button
-                    onClick={handleConvert}
-                    className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'
-                  >
-                    convert
-                  </button>
+                Notes
+              </button>
+              <button
+                onClick={() => setTestMode(true)}
+                className={clsx(
+                  'px-2 flex justify-center items-center text-sm h-6',
+                  {
+                    'bg-white rounded-md shadow-md': testMode,
+                  }
+                )}
+              >
+                Testing
+              </button>
+            </div>
+            {testMode ? (
+              <div className='w-full'>
+                <QuestionList type='Generated' qs={genQs} />
+                <QuestionList type='Converted' qs={qs} />
+              </div>
+            ) : (
+              <>
+                <div className='flex flex-col w-full gap-1 bg-white rounded-md'>
+                  <Highlightable handleHighlight={handleHighlight}>
+                    {blocks.map((block, key) => {
+                      return (
+                        <EditableBlock
+                          key={key}
+                          id={block.id}
+                          tag={block.tag}
+                          html={block.html}
+                          updatePage={updatePageHandler}
+                          addBlock={addBlockHandler}
+                          deleteBlock={deleteBlockHandler}
+                        />
+                      );
+                    })}
+                  </Highlightable>
                 </div>
-              </Popup>
+                {popupOpen && (
+                  <Popup
+                    top={location.top}
+                    left={location.left}
+                    height={location.height}
+                  >
+                    <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
+                      <button
+                        onClick={handleConvert}
+                        className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'
+                      >
+                        convert
+                      </button>
+                    </div>
+                  </Popup>
+                )}
+                {showSource && (
+                  <Source
+                    source={source}
+                    setSource={setSource}
+                    handleGenerateQuestions={handleGenerateQuestions}
+                    doneGenerating={doneGenerating}
+                  />
+                )}
+                <button
+                  onClick={() => setShowSource((showSource) => !showSource)}
+                  className='fixed flex items-center justify-center w-10 h-10 transition-shadow duration-150 ease-in bg-white border border-gray-200 rounded-full bottom-8 right-8 hover:shadow-md'
+                >
+                  <PencilIcon className='w-6 h-6' />
+                </button>
+              </>
             )}
-            {showSource && (
-              <Source
-                source={source}
-                setSource={setSource}
-                handleGenerateQuestions={handleGenerateQuestions}
-                doneGenerating={doneGenerating}
-              />
-            )}
-            <button
-              onClick={() => setShowSource((showSource) => !showSource)}
-              className='fixed flex items-center justify-center w-10 h-10 transition-shadow duration-150 ease-in bg-white border border-gray-200 rounded-full bottom-8 right-8 hover:shadow-md'
-            >
-              <PencilIcon className='w-6 h-6' />
-            </button>
           </>
         )}
       </div>

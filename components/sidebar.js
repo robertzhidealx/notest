@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
 import clsx from 'clsx';
+import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
-import { PlusIcon } from '@heroicons/react/solid';
+import { ChevronDoubleRightIcon, PlusIcon } from '@heroicons/react/solid';
 import { noteService } from '../services/note.services';
+import { ChevronDoubleLeftIcon } from '@heroicons/react/outline';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -11,9 +12,10 @@ const uid = () => {
 
 const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
 
-const Sidebar = ({ current }) => {
+const Sidebar = ({ current, isHidden, setIsHidden }) => {
   const [notes, setNotes] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
+
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -68,14 +70,33 @@ const Sidebar = ({ current }) => {
     setNotes([...notes, { id: -1 }]);
   };
 
-  return (
-    <div className='w-[200px] flex-none min-h-screen hidden sm:block'>
-      <h1
-        className='px-3 py-2 text-xl font-medium border-b cursor-pointer'
-        onClick={() => router.push('/note')}
-      >
-        Notest
-      </h1>
+  return isHidden ? (
+    <button
+      className='fixed flex items-center justify-center w-6 h-6 my-2 transition-colors duration-150 ease-in rounded top-1 left-1 hover:bg-slate-200'
+      onClick={() => setIsHidden(false)}
+    >
+      <ChevronDoubleRightIcon className='w-5 h-5' />
+    </button>
+  ) : (
+    <div
+      className={clsx('w-[200px] flex-none hidden fixed', {
+        'sm:block': !isHidden,
+      })}
+    >
+      <div className='flex items-center justify-between px-3 py-2 border-b'>
+        <h1
+          className='mb-0 text-xl font-medium cursor-pointer'
+          onClick={() => (window.location.href = '/note')}
+        >
+          Notest
+        </h1>
+        <button
+          className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in rounded hover:bg-slate-200'
+          onClick={() => setIsHidden(true)}
+        >
+          <ChevronDoubleLeftIcon className='w-5 h-5' />
+        </button>
+      </div>
       <div className='flex items-center justify-between px-3 pt-2 pb-1 group text-slate-500'>
         <h2 className='font-medium'>Notes</h2>
         <PlusIcon
