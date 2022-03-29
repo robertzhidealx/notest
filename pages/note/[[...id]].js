@@ -225,7 +225,7 @@ const Note = () => {
       />
       <div
         className={clsx(
-          'flex flex-col items-center bg-[#f0f2f5] px-8 py-2 w-full overflow-y-auto',
+          'flex flex-col items-center bg-[#f0f2f5] px-8 py-2 w-full overflow-y-auto min-h-screen',
           { 'ml-[200px]': !sidebarHidden }
         )}
       >

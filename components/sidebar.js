@@ -79,7 +79,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
     </button>
   ) : (
     <div
-      className={clsx('w-[200px] flex-none hidden fixed', {
+      className={clsx('w-[200px] flex-none hidden fixed min-h-screen', {
         'sm:block': !isHidden,
       })}
     >
