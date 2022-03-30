@@ -1,6 +1,8 @@
 import React from 'react';
 import ContentEditable from 'react-contenteditable';
 import clsx from 'clsx';
+import { compiler } from '../lib/engine/compiler';
+import { interpreter } from '../lib/engine/interpreter';
 
 class EditableBlock extends React.Component {
   constructor(props) {
@@ -11,30 +13,61 @@ class EditableBlock extends React.Component {
     this.contentEditable = React.createRef();
     this.state = {
       htmlBackup: null,
-      html: '',
+      html: '', // fully rendered html
       tag: 'p',
       previousKey: '',
+      ast: null, // abstract syntax tree
+      raw: '', // raw text
+      focused: false, // whether the block is focused (clicked)
     };
   }
 
   componentDidMount() {
-    this.setState({ html: this.props.html, tag: this.props.tag });
+    this.setState({
+      html: this.props.html,
+      tag: this.props.tag,
+      ast: this.props.ast,
+      raw: this.props.raw,
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
     const htmlChanged = prevState.html !== this.state.html;
     const tagChanged = prevState.tag !== this.state.tag;
-    if (htmlChanged || tagChanged) {
+    const astChanged = prevState.ast !== this.state.ast;
+    if (htmlChanged || tagChanged || astChanged) {
       this.props.updatePage({
         id: this.props.id,
         html: this.state.html,
         tag: this.state.tag,
+        ast: this.state.ast,
+        raw: this.state.raw,
       });
     }
   }
 
   onChangeHandler(e) {
-    this.setState({ html: e.target.value });
+    const raw = e.target.value;
+    const ast = compiler.parse(raw);
+    const res = interpreter.eval(ast);
+    let html = '';
+    switch (ast.type) {
+      case 'string':
+        html = res;
+        break;
+      case 'question':
+        html = `<div style="color: rgb(2 132 199);">${res}</div>`;
+        break;
+      case 'answer':
+        html = `<div style="color: rgb(234 88 12);">${res}</div>`;
+        break;
+      default:
+    }
+    this.setState({
+      html,
+      ast,
+      raw,
+    });
   }
 
   onKeyDownHandler(e) {
@@ -52,6 +85,8 @@ class EditableBlock extends React.Component {
     }
     if (e.key === 'Backspace' && !this.state.html) {
       e.preventDefault();
+      if (this.props.prevBlock && this.props.prevBlock.ast.type === 'question')
+        return;
       this.props.deleteBlock({
         id: this.props.id,
         ref: this.contentEditable.current,
@@ -67,10 +102,12 @@ class EditableBlock extends React.Component {
           'w-full p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none'
         )}
         innerRef={this.contentEditable}
-        html={this.state.html}
+        html={this.state.focused ? this.state.raw : this.state.html}
         tagName={this.state.tag}
         onChange={this.onChangeHandler}
         onKeyDown={this.onKeyDownHandler}
+        onFocus={() => this.setState({ focused: true })}
+        onBlur={() => this.setState({ focused: false })}
       />
     );
   }

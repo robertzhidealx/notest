@@ -11,6 +11,7 @@ import { noteService } from '../../services/note.services';
 import GeneratedQuestion from '../../components/generatedQuestion';
 import Source from '../../components/source';
 import Sidebar from '../../components/sidebar';
+import { compiler } from '../../lib/engine/compiler';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -26,7 +27,13 @@ const setCaretToEnd = (element) => {
   element.focus();
 };
 
-const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
+const initialBlock = {
+  id: uid(),
+  html: 'Start here',
+  tag: 'p',
+  ast: { type: 'string', value: 'Start here' },
+  raw: 'Start here',
+};
 const initialQObject = { generated: [], converted: [] };
 
 const Note = () => {
@@ -162,13 +169,15 @@ const Note = () => {
   const updatePageHandler = async (updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
     const updatedBlocks = [...blocks];
+    // console.log(updatedBlock.ast);
     updatedBlocks[index] = {
       ...updatedBlocks[index],
       tag: updatedBlock.tag,
       html: updatedBlock.html,
+      ast: updatedBlock.ast,
+      raw: updatedBlock.raw,
     };
     setBlocks(updatedBlocks);
-    // console.log(updatedBlocks);
     if (typeof noteObj._id !== 'undefined') {
       noteService.update(
         noteObj._id,
@@ -183,8 +192,20 @@ const Note = () => {
   const addBlockHandler = async (currentBlock) => {
     setIsAddBlock(true);
     setCurrentBlock(currentBlock);
-    const newBlock = { id: uid(), html: '', tag: 'p' };
+    const newBlock = {
+      id: uid(),
+      html: '',
+      tag: 'p',
+      ast: compiler.parse(''),
+      raw: '',
+    };
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
+    const block = blocks[index];
+    if (block.ast.type === 'question') {
+      newBlock.html = '<div style="color: rgb(234 88 12);"></div>';
+      newBlock.raw = '(())';
+      newBlock.ast = compiler.parse('(())');
+    }
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
     setBlocks(updatedBlocks);
@@ -264,37 +285,40 @@ const Note = () => {
               <>
                 <div className='flex flex-col w-full gap-1 bg-white rounded-md'>
                   <Highlightable handleHighlight={handleHighlight}>
-                    {blocks.map((block, key) => {
+                    {blocks.map((block, index) => {
                       return (
                         <EditableBlock
-                          key={key}
+                          key={block.id}
                           id={block.id}
                           tag={block.tag}
                           html={block.html}
+                          ast={block.ast}
+                          raw={block.raw}
                           updatePage={updatePageHandler}
                           addBlock={addBlockHandler}
                           deleteBlock={deleteBlockHandler}
+                          prevBlock={index - 1 >= 0 ? blocks[index - 1] : null}
                         />
                       );
                     })}
                   </Highlightable>
                 </div>
-                {popupOpen && (
-                  <Popup
-                    top={location.top}
-                    left={location.left}
-                    height={location.height}
-                  >
-                    <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
-                      <button
-                        onClick={handleConvert}
-                        className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'
-                      >
-                        convert
-                      </button>
-                    </div>
-                  </Popup>
-                )}
+                <Popup
+                  top={location.top}
+                  left={location.left}
+                  height={location.height}
+                  popupOpen={popupOpen}
+                  setPopupOpen={setPopupOpen}
+                >
+                  <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
+                    <button
+                      onClick={handleConvert}
+                      className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'
+                    >
+                      convert
+                    </button>
+                  </div>
+                </Popup>
                 {showSource && (
                   <Source
                     source={source}
