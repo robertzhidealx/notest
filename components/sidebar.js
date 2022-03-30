@@ -97,15 +97,19 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
           <ChevronDoubleLeftIcon className='w-5 h-5' />
         </button>
       </div>
-      <div className='flex items-center justify-between px-3 pt-2 pb-1 group text-slate-500'>
-        <h2 className='font-medium'>Notes</h2>
+      <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded-md bg-slate-200 w-15'>
+      {/* <div className='flex items-center self-start justify-center h-8 px-1 mb-2 group text-slate-500 rounded-md bg-slate-200'> */}
+      {/* <div className='flex items-center justify-between px-3 pt-2 pb-1 group text-slate-500'> */}
+      <div className='px-2 flex justify-center items-center text-sm h-6 bg-white w-full rounded-md shadow-md' onClick={handleCreate}>
+        <h2 className='font-medium m-0'>Add new Note</h2>
         <PlusIcon
-          className='hidden w-4 h-4 cursor-pointer group-hover:block'
+          className='w-4 h-4 cursor-pointer'
           id='create-btn'
-          onClick={handleCreate}
         />
       </div>
+      </div>
       <div className=''>
+        <h2 className='flex items-center w-full px-3 outline-none h-7'>Notes</h2>
         {notes.map((note, key) => {
           return note.id === -1 ? (
             <form key={note.id} onSubmit={formik.handleSubmit} ref={formRef}>
