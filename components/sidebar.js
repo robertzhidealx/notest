@@ -4,7 +4,10 @@ import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import { ChevronDoubleRightIcon, PlusIcon } from '@heroicons/react/solid';
 import { noteService } from '../services/note.services';
-import { ChevronDoubleLeftIcon } from '@heroicons/react/outline';
+import {
+  ChevronDoubleLeftIcon,
+  DocumentAddIcon,
+} from '@heroicons/react/outline';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -52,7 +55,6 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
   useEffect(() => {
     if (!isCreating) return;
     const handleClickOutside = (e) => {
-      if (e.target.id === 'create-btn') return;
       if (formRef.current && !formRef.current.contains(e.target)) {
         const newNotes = notes.filter(({ id }) => id !== -1);
         setNotes(newNotes);
@@ -97,19 +99,17 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
           <ChevronDoubleLeftIcon className='w-5 h-5' />
         </button>
       </div>
-      <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded-md bg-slate-200 w-15'>
-      {/* <div className='flex items-center self-start justify-center h-8 px-1 mb-2 group text-slate-500 rounded-md bg-slate-200'> */}
-      {/* <div className='flex items-center justify-between px-3 pt-2 pb-1 group text-slate-500'> */}
-      <div className='px-2 flex justify-center items-center text-sm h-6 bg-white w-full rounded-md shadow-md' onClick={handleCreate}>
-        <h2 className='font-medium m-0'>Add new Note</h2>
-        <PlusIcon
-          className='w-4 h-4 cursor-pointer'
-          id='create-btn'
-        />
-      </div>
-      </div>
-      <div className=''>
-        <h2 className='flex items-center w-full px-3 outline-none h-7'>Notes</h2>
+      <div>
+        <div
+          className='flex items-center justify-between px-3 pt-2 pb-1'
+          onClick={handleCreate}
+        >
+          <h2 className='mb-0 font-medium'>Notes</h2>
+          <div className='flex items-center gap-x-0.5 hover:bg-slate-200 rounded transition-colors duration-150 ease-in cursor-pointer select-none'>
+            <DocumentAddIcon className='w-4 h-4' />
+            <span className='pr-0.5'>New</span>
+          </div>
+        </div>
         {notes.map((note, key) => {
           return note.id === -1 ? (
             <form key={note.id} onSubmit={formik.handleSubmit} ref={formRef}>
