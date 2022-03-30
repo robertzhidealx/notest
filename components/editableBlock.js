@@ -99,7 +99,7 @@ class EditableBlock extends React.Component {
     return (
       <ContentEditable
         className={clsx(
-          'w-full p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none'
+          'w-full p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none mb-0'
         )}
         innerRef={this.contentEditable}
         html={this.state.focused ? this.state.raw : this.state.html}

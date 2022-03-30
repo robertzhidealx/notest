@@ -283,7 +283,7 @@ const Note = () => {
               </div>
             ) : (
               <>
-                <div className='flex flex-col w-full gap-1 bg-white rounded-md'>
+                <div className='flex flex-col w-full bg-white rounded-md'>
                   <Highlightable handleHighlight={handleHighlight}>
                     {blocks.map((block, index) => {
                       return (
