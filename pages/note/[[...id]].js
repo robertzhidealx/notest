@@ -1,7 +1,7 @@
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { PencilIcon } from '@heroicons/react/outline';
-import clsx from 'clsx';
 import EditableBlock from '../../components/editableBlock';
 import Highlightable from '../../components/utils/highlightable';
 import Popup from '../../components/utils/popup';
@@ -13,20 +13,10 @@ import Source from '../../components/source';
 import Sidebar from '../../components/sidebar';
 import { compiler } from '../../lib/engine/compiler';
 import { interpreter } from '../../lib/engine/interpreter';
-import { initialBlock } from '../../components/utils';
+import { initialBlock, setCaretToEnd } from '../../lib/utils';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
-
-const setCaretToEnd = (element) => {
-  const range = document.createRange();
-  const selection = window.getSelection();
-  range.selectNodeContents(element);
-  range.collapse(false);
-  selection.removeAllRanges();
-  selection.addRange(range);
-  element.focus();
 };
 
 const initialQObject = { generated: [], converted: [] };
@@ -40,7 +30,8 @@ const Note = () => {
   const [testMode, setTestMode] = useState(false);
   const [currentBlock, setCurrentBlock] = useState(null);
   const [previousBlock, setPreviousBlock] = useState(null);
-  const [isAddBlock, setIsAddBlock] = useState(false);
+  const [addingBlock, setAddingBlock] = useState(false);
+  const [removingBlock, setRemovingBlock] = useState(false);
 
   // highlight and convert logic
   const [popupOpen, setPopupOpen] = useState(false); // popup open state
@@ -153,15 +144,17 @@ const Note = () => {
   };
 
   useEffect(() => {
-    if (isAddBlock) {
+    if (addingBlock) {
+      setAddingBlock(false);
       if (!currentBlock) return;
       currentBlock.ref.nextElementSibling.focus();
-    } else {
+    } else if (removingBlock) {
+      setRemovingBlock(false);
       if (!previousBlock) return;
       setCaretToEnd(previousBlock);
       previousBlock.focus();
     }
-  }, [blocks, isAddBlock, currentBlock, previousBlock]);
+  }, [addingBlock, removingBlock, currentBlock, previousBlock]);
 
   const updatePageHandler = async (updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
@@ -187,7 +180,7 @@ const Note = () => {
   };
 
   const addBlockHandler = async (currentBlock) => {
-    setIsAddBlock(true);
+    setAddingBlock(true);
     setCurrentBlock(currentBlock);
     const newBlock = {
       id: uid(),
@@ -209,8 +202,8 @@ const Note = () => {
     );
   };
 
-  const deleteBlockHandler = async (currentBlock) => {
-    setIsAddBlock(false);
+  const removeBlockHandler = async (currentBlock) => {
+    setRemovingBlock(true);
     const prev = currentBlock.ref.previousElementSibling;
     if (prev) {
       setPreviousBlock(prev);
@@ -276,7 +269,7 @@ const Note = () => {
               <>
                 <div className='flex flex-col w-full bg-white rounded-md'>
                   <Highlightable handleHighlight={handleHighlight}>
-                    {blocks.map((block, index) => {
+                    {blocks.map((block) => {
                       return (
                         <EditableBlock
                           key={block.id}
@@ -287,8 +280,7 @@ const Note = () => {
                           raw={block.raw}
                           updatePage={updatePageHandler}
                           addBlock={addBlockHandler}
-                          deleteBlock={deleteBlockHandler}
-                          prevBlock={index - 1 >= 0 ? blocks[index - 1] : null}
+                          deleteBlock={removeBlockHandler}
                         />
                       );
                     })}

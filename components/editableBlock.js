@@ -3,6 +3,7 @@ import ContentEditable from 'react-contenteditable';
 import clsx from 'clsx';
 import { compiler } from '../lib/engine/compiler';
 import { interpreter } from '../lib/engine/interpreter';
+import { setCaretToEnd } from '../lib/utils/';
 
 class EditableBlock extends React.Component {
   constructor(props) {
@@ -72,12 +73,26 @@ class EditableBlock extends React.Component {
     }
     if (e.key === 'Backspace' && !this.state.html) {
       e.preventDefault();
-      if (this.props.prevBlock && this.props.prevBlock.ast.type === 'question')
-        return;
       this.props.deleteBlock({
         id: this.props.id,
         ref: this.contentEditable.current,
       });
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = this.contentEditable.current.previousElementSibling;
+      if (prev) {
+        prev.focus();
+        setCaretToEnd(prev);
+      }
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const next = this.contentEditable.current.nextElementSibling;
+      if (next) {
+        next.focus();
+        setCaretToEnd(next);
+      }
     }
     this.setState({ previousKey: e.key });
   }

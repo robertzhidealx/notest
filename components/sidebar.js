@@ -8,7 +8,7 @@ import {
   ChevronDoubleLeftIcon,
   DocumentAddIcon,
 } from '@heroicons/react/outline';
-import { initialBlock } from '../components/utils';
+import { initialBlock } from '../lib/utils';
 
 const Sidebar = ({ current, isHidden, setIsHidden }) => {
   const [notes, setNotes] = useState([]);
