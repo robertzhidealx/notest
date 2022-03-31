@@ -8,12 +8,7 @@ import {
   ChevronDoubleLeftIcon,
   DocumentAddIcon,
 } from '@heroicons/react/outline';
-
-const uid = () => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
-
-const initialBlock = { id: uid(), html: 'Start here', tag: 'p' };
+import { initialBlock } from '../components/utils';
 
 const Sidebar = ({ current, isHidden, setIsHidden }) => {
   const [notes, setNotes] = useState([]);

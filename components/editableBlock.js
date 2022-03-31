@@ -49,20 +49,7 @@ class EditableBlock extends React.Component {
   onChangeHandler(e) {
     const raw = e.target.value;
     const ast = compiler.parse(raw);
-    const res = interpreter.eval(ast);
-    let html = '';
-    switch (ast.type) {
-      case 'string':
-        html = res;
-        break;
-      case 'question':
-        html = `<div style="display: flex; height: 22px; align-items: center; column-gap: 3px"><div style="font-size: 0.75rem; line-height: 1rem; font-weight: 500; color: rgb(234 88 12); border-color: rgb(234 88 12); border-width: 1.5px; padding: 1px; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; height: 15px; width: 15px;">Q</div><p style="margin-bottom: 0px">${res}</p></div>`;
-        break;
-      case 'answer':
-        html = `<div style="display: flex; height: 22px; align-items: center; column-gap: 3px"><div style="font-size: 0.75rem; line-height: 1rem; font-weight: 500; color: rgb(2 132 199); border-color: rgb(2 132 199); border-width: 1.5px; padding: 1px; display: flex; align-items: center; justify-content: center; border-radius: 0.25rem; height: 15px; width: 15px;">A</div><p style="margin-bottom: 0px">${res}</p></div>`;
-        break;
-      default:
-    }
+    const html = interpreter.print(ast);
     this.setState({
       html,
       ast,

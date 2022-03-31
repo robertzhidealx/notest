@@ -12,6 +12,8 @@ import GeneratedQuestion from '../../components/generatedQuestion';
 import Source from '../../components/source';
 import Sidebar from '../../components/sidebar';
 import { compiler } from '../../lib/engine/compiler';
+import { interpreter } from '../../lib/engine/interpreter';
+import { initialBlock } from '../../components/utils';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -27,13 +29,6 @@ const setCaretToEnd = (element) => {
   element.focus();
 };
 
-const initialBlock = {
-  id: uid(),
-  html: 'Start here',
-  tag: 'p',
-  ast: { type: 'string', value: 'Start here' },
-  raw: 'Start here',
-};
 const initialQObject = { generated: [], converted: [] };
 
 const Note = () => {
@@ -134,9 +129,11 @@ const Note = () => {
       )[0];
 
       // push the solution to the notes blocks as well!
-      const newBlockQ = { id: uid(), html: s, tag: 'p' };
-      const newBlockA = { id: uid(), html: ans, tag: 'p' };
-      newBlocks.push(newBlockQ, newBlockA);
+      const raw = `{{${s}}}((${ans}))`;
+      const ast = compiler.parse(raw);
+      const html = interpreter.print(ast);
+      const newBlock = { id: uid(), tag: 'p', raw, html, ast };
+      newBlocks.push(newBlock);
       generatedData.push({ q: s, ans: ans });
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
@@ -178,7 +175,7 @@ const Note = () => {
       raw: updatedBlock.raw,
     };
     setBlocks(updatedBlocks);
-    if (typeof noteObj._id !== 'undefined') {
+    if (noteObj._id) {
       noteService.update(
         noteObj._id,
         noteObj.title,
@@ -200,12 +197,6 @@ const Note = () => {
       raw: '',
     };
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
-    const block = blocks[index];
-    if (block.ast.type === 'question') {
-      newBlock.html = '<div style="color: rgb(234 88 12);"></div>';
-      newBlock.raw = '(())';
-      newBlock.ast = compiler.parse('(())');
-    }
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
     setBlocks(updatedBlocks);
