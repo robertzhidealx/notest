@@ -74,13 +74,6 @@ class EditableBlock extends React.Component {
     }
     if (e.key === 'Backspace' && !this.state.html) {
       e.preventDefault();
-      this.props.delQuestion({
-        id: this.props.id,
-        html: this.state.html,
-        tag: this.state.tag,
-        ast: this.state.ast,
-        raw: this.state.raw,
-      });
       this.props.deleteBlock({
         id: this.props.id,
         ref: this.contentEditable.current,

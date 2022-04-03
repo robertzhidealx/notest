@@ -183,7 +183,7 @@ const Note = () => {
     let list = qObject.generated;
     const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
     if(index != -1){ //ast updated so qustion must be deleted 
-      list = list.splice(index, 1);
+      list.splice(index, 1);
       setqObject({generated: list, converted: qObject.converted});
       await noteService.update(
         noteObj._id,
@@ -208,7 +208,7 @@ const Note = () => {
     } else if(currentBlock != null) {
       const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
       if(index != -1){ //ast updated so qustion must be deleted 
-        list = list.splice(index, 1);
+        list.splice(index, 1);
       }
     }
     setqObject({generated: list, converted: qObject.converted});
@@ -247,6 +247,7 @@ const Note = () => {
 
   const removeBlockHandler = async (currentBlock) => {
     setRemovingBlock(true);
+    deleteQuestion(currentBlock);
     const prev = currentBlock.ref.previousElementSibling;
     if (prev) {
       setPreviousBlock(prev);
