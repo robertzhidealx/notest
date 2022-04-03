@@ -58,6 +58,7 @@ class EditableBlock extends React.Component {
     });
   }
 
+
   onKeyDownHandler(e) {
     if (e.key === '/') {
       this.setState({ htmlBackup: this.state.html });
@@ -73,12 +74,26 @@ class EditableBlock extends React.Component {
     }
     if (e.key === 'Backspace' && !this.state.html) {
       e.preventDefault();
+      this.props.delQuestion({
+        id: this.props.id,
+        html: this.state.html,
+        tag: this.state.tag,
+        ast: this.state.ast,
+        raw: this.state.raw,
+      });
       this.props.deleteBlock({
         id: this.props.id,
         ref: this.contentEditable.current,
       });
     }
     if (e.key === 'ArrowUp') {
+      this.props.updateQuestion({
+        id: this.props.id,
+        html: this.state.html,
+        tag: this.state.tag,
+        ast: this.state.ast,
+        raw: this.state.raw,
+      });
       e.preventDefault();
       const prev = this.contentEditable.current.previousElementSibling;
       if (prev) {
@@ -87,6 +102,13 @@ class EditableBlock extends React.Component {
       }
     }
     if (e.key === 'ArrowDown') {
+      this.props.updateQuestion({
+        id: this.props.id,
+        html: this.state.html,
+        tag: this.state.tag,
+        ast: this.state.ast,
+        raw: this.state.raw,
+      });
       e.preventDefault();
       const next = this.contentEditable.current.nextElementSibling;
       if (next) {
@@ -109,7 +131,17 @@ class EditableBlock extends React.Component {
         onChange={this.onChangeHandler}
         onKeyDown={this.onKeyDownHandler}
         onFocus={() => this.setState({ focused: true })}
-        onBlur={() => this.setState({ focused: false })}
+        onBlur={() => {
+          this.setState({ focused: false })
+          this.props.updateQuestion({
+            id: this.props.id,
+            html: this.state.html,
+            tag: this.state.tag,
+            ast: this.state.ast,
+            raw: this.state.raw,
+          });
+        }
+        }
       />
     );
   }

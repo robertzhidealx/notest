@@ -125,7 +125,7 @@ const Note = () => {
       const html = interpreter.print(ast);
       const newBlock = { id: uid(), tag: 'p', raw, html, ast };
       newBlocks.push(newBlock);
-      generatedData.push({ q: s, ans: ans });
+      generatedData.push({ q: s, ans: ans, blockId: newBlock.id});
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
     setqObject({ generated: generatedData, converted: qObject.converted });
@@ -179,6 +179,48 @@ const Note = () => {
     }
   };
 
+  const deleteQuestion = async (currentBlock) => {
+    let list = qObject.generated;
+    const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
+    if(index != -1){ //ast updated so qustion must be deleted 
+      list = list.splice(index, 1);
+      setqObject({generated: list, converted: qObject.converted});
+      await noteService.update(
+        noteObj._id,
+        noteObj.title,
+        noteObj.author,
+        blocks,
+        { generated: list, converted: qObject.converted }
+      );
+    }
+  }
+
+  const addUpdateQuestionBlock = async (currentBlock) => {
+    let list = qObject.generated;
+    if(currentBlock.ast != null && currentBlock.ast.type == 'qa' && currentBlock != null){
+      const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
+      if(index == -1){ //New question (add it)
+        list.push({q: currentBlock.ast.value.q.value.value, ans: currentBlock.ast.value.a.value.value, blockId: currentBlock.id});
+      } else { //Old question (update it)
+        list[index].q = currentBlock.ast.value.q.value.value;
+        list[index].ans = currentBlock.ast.value.a.value.value;
+      }
+    } else if(currentBlock != null) {
+      const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
+      if(index != -1){ //ast updated so qustion must be deleted 
+        list = list.splice(index, 1);
+      }
+    }
+    setqObject({generated: list, converted: qObject.converted});
+    await noteService.update(
+      noteObj._id,
+      noteObj.title,
+      noteObj.author,
+      blocks,
+      { generated: list, converted: qObject.converted }
+    );
+  }
+
   const addBlockHandler = async (currentBlock) => {
     setAddingBlock(true);
     setCurrentBlock(currentBlock);
@@ -190,6 +232,7 @@ const Note = () => {
       raw: '',
     };
     const index = blocks.map((b) => b.id).indexOf(currentBlock.id);
+    addUpdateQuestionBlock(blocks[index]);
     const updatedBlocks = [...blocks];
     updatedBlocks.splice(index + 1, 0, newBlock);
     setBlocks(updatedBlocks);
@@ -281,6 +324,8 @@ const Note = () => {
                           updatePage={updatePageHandler}
                           addBlock={addBlockHandler}
                           deleteBlock={removeBlockHandler}
+                          updateQuestion={addUpdateQuestionBlock}
+                          delQuestion={deleteQuestion}
                         />
                       );
                     })}
