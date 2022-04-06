@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
-import { ChevronDoubleRightIcon, PlusIcon } from '@heroicons/react/solid';
+import { ChevronDoubleRightIcon } from '@heroicons/react/outline';
 import { noteService } from '../services/note.services';
 import {
   ChevronDoubleLeftIcon,
@@ -69,16 +69,19 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
 
   return isHidden ? (
     <button
-      className='fixed flex items-center justify-center w-6 h-6 my-2 transition-colors duration-150 ease-in rounded top-1 left-1 hover:bg-slate-200'
+      className='fixed flex items-center justify-center w-6 h-6 my-2 transition-colors duration-150 ease-in rounded top-1 left-1 hover:bg-slate-300'
       onClick={() => setIsHidden(false)}
     >
       <ChevronDoubleRightIcon className='w-5 h-5' />
     </button>
   ) : (
     <div
-      className={clsx('w-[200px] flex-none hidden fixed min-h-screen', {
-        'sm:block': !isHidden,
-      })}
+      className={clsx(
+        'w-[200px] flex-none hidden fixed min-h-screen bg-gray-100 border-r',
+        {
+          'sm:block': !isHidden,
+        }
+      )}
     >
       <div className='flex items-center justify-between px-3 py-2 border-b'>
         <h1
@@ -88,7 +91,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
           Notest
         </h1>
         <button
-          className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in rounded hover:bg-slate-200'
+          className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in rounded hover:bg-slate-300'
           onClick={() => setIsHidden(true)}
         >
           <ChevronDoubleLeftIcon className='w-5 h-5' />
@@ -100,7 +103,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
           onClick={handleCreate}
         >
           <h2 className='mb-0 font-medium'>Notes</h2>
-          <div className='flex items-center gap-x-0.5 hover:bg-slate-200 rounded transition-colors duration-150 ease-in cursor-pointer select-none'>
+          <div className='flex items-center gap-x-0.5 hover:bg-slate-300 rounded transition-colors duration-150 ease-in cursor-pointer select-none'>
             <DocumentAddIcon className='w-4 h-4' />
             <span className='pr-0.5'>New</span>
           </div>
@@ -110,7 +113,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
             <form key={note.id} onSubmit={formik.handleSubmit} ref={formRef}>
               <input
                 autoFocus
-                className='flex items-center w-full px-3 text-left outline-none bg-slate-200 h-7'
+                className='flex items-center w-full px-3 text-left outline-none bg-slate-300 h-7'
                 name='name'
                 type='text'
                 value={formik.values.name}
@@ -125,9 +128,9 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
                 // router.push(`/note/${note._id}`);
               }}
               className={clsx(
-                'w-full px-3 text-left transition-colors duration-150 ease-in h-7 hover:bg-slate-200 truncate',
+                'w-full px-3 text-left transition-colors duration-150 ease-in h-7 hover:bg-slate-300 truncate',
                 {
-                  'bg-slate-200': current && note._id === current[0],
+                  'bg-slate-300': current && note._id === current[0],
                 }
               )}
             >

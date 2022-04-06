@@ -73,7 +73,6 @@ const Note = () => {
     })();
   }, [router.query.id]);
 
-
   const handleHighlight = (e) => {
     setPopupOpen(true);
     setText(e.target.innerText);
@@ -126,7 +125,7 @@ const Note = () => {
       const html = interpreter.print(ast);
       const newBlock = { id: uid(), tag: 'p', raw, html, ast };
       newBlocks.push(newBlock);
-      generatedData.push({ q: s, ans: ans, blockId: newBlock.id});
+      generatedData.push({ q: s, ans: ans, blockId: newBlock.id });
       list.push(<GeneratedQuestion q={s} ans={ans} />);
     }
     setqObject({ generated: generatedData, converted: qObject.converted });
@@ -183,9 +182,10 @@ const Note = () => {
   const deleteQuestion = async (currentBlock) => {
     let list = qObject.generated;
     const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
-    if(index != -1){ //ast updated so qustion must be deleted 
+    if (index != -1) {
+      //ast updated so qustion must be deleted
       list.splice(index, 1);
-      setqObject({generated: list, converted: qObject.converted}, () => {
+      setqObject({ generated: list, converted: qObject.converted }, () => {
         console.log(qObject);
       });
       await noteService.update(
@@ -201,25 +201,36 @@ const Note = () => {
       generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
     });
     setGenQs(generated);
-  }
+  };
 
   const addUpdateQuestionBlock = async (currentBlock) => {
     let list = qObject.generated;
-    if(currentBlock.ast != null && currentBlock.ast.type == 'qa' && currentBlock != null){
+    if (
+      currentBlock.ast != null &&
+      currentBlock.ast.type == 'qa' &&
+      currentBlock != null
+    ) {
       const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
-      if(index == -1){ //New question (add it)
-        list.push({q: currentBlock.ast.value.q.value.value, ans: currentBlock.ast.value.a.value.value, blockId: currentBlock.id});
-      } else { //Old question (update it)
+      if (index == -1) {
+        //New question (add it)
+        list.push({
+          q: currentBlock.ast.value.q.value.value,
+          ans: currentBlock.ast.value.a.value.value,
+          blockId: currentBlock.id,
+        });
+      } else {
+        //Old question (update it)
         list[index].q = currentBlock.ast.value.q.value.value;
         list[index].ans = currentBlock.ast.value.a.value.value;
       }
-    } else if(currentBlock != null) {
+    } else if (currentBlock != null) {
       const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
-      if(index != -1){ //ast updated so qustion must be deleted 
+      if (index != -1) {
+        //ast updated so qustion must be deleted
         list.splice(index, 1);
       }
     }
-    setqObject({generated: list, converted: qObject.converted}, () => {
+    setqObject({ generated: list, converted: qObject.converted }, () => {
       console.log(qObject);
     });
     await noteService.update(
@@ -234,7 +245,7 @@ const Note = () => {
       generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
     });
     setGenQs(generated);
-  }
+  };
 
   const addBlockHandler = async (currentBlock) => {
     setAddingBlock(true);
@@ -289,8 +300,8 @@ const Note = () => {
       />
       <div
         className={clsx(
-          'flex flex-col items-center bg-[#f0f2f5] px-8 py-2 w-full overflow-y-auto min-h-screen',
-          { 'ml-[200px]': !sidebarHidden }
+          'flex flex-col items-center bg-white px-8 py-2 w-full overflow-y-auto min-h-screen',
+          { 'sm:ml-[200px]': !sidebarHidden }
         )}
       >
         {!onHomePage && (
@@ -326,9 +337,9 @@ const Note = () => {
               </div>
             ) : (
               <>
-                <div className='flex flex-col w-full bg-white rounded-md'>
+                <div className='flex flex-col w-full bg-white rounded'>
                   <Highlightable handleHighlight={handleHighlight}>
-                    {blocks.map((block) => {
+                    {blocks.map((block, index) => {
                       return (
                         <EditableBlock
                           key={block.id}
@@ -342,6 +353,8 @@ const Note = () => {
                           deleteBlock={removeBlockHandler}
                           updateQuestion={addUpdateQuestionBlock}
                           delQuestion={deleteQuestion}
+                          isStart={index === 0}
+                          isEnd={index === blocks.length - 1}
                         />
                       );
                     })}
@@ -363,25 +376,17 @@ const Note = () => {
                     </button>
                   </div>
                 </Popup>
-                {showSource && (
-                  <Source
-                    source={source}
-                    setSource={setSource}
-                    handleGenerateQuestions={handleGenerateQuestions}
-                    doneGenerating={doneGenerating}
-                  />
-                )}
-                <button
-                  onClick={() => setShowSource((showSource) => !showSource)}
-                  className='fixed flex items-center justify-center w-10 h-10 transition-shadow duration-150 ease-in bg-white border border-gray-200 rounded-full bottom-8 right-8 hover:shadow-md'
-                >
-                  <PencilIcon className='w-6 h-6' />
-                </button>
               </>
             )}
           </>
         )}
       </div>
+      <Source
+        source={source}
+        setSource={setSource}
+        handleGenerateQuestions={handleGenerateQuestions}
+        doneGenerating={doneGenerating}
+      />
     </div>
   );
 };

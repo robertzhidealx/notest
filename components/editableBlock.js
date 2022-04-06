@@ -58,7 +58,6 @@ class EditableBlock extends React.Component {
     });
   }
 
-
   onKeyDownHandler(e) {
     if (e.key === '/') {
       this.setState({ htmlBackup: this.state.html });
@@ -116,7 +115,9 @@ class EditableBlock extends React.Component {
     return (
       <ContentEditable
         className={clsx(
-          'w-full p-1 hover:bg-gray-200 focus:bg-gray-200 transition-colors ease-in-out duration-200 outline-none mb-0'
+          'w-full p-1 hover:bg-slate-200 transition-colors ease-in-out duration-200 outline-none mb-0',
+          { 'rounded-t': this.props.isStart },
+          { 'rounded-b': this.props.isEnd }
         )}
         innerRef={this.contentEditable}
         html={this.state.focused ? this.state.raw : this.state.html}
@@ -125,7 +126,7 @@ class EditableBlock extends React.Component {
         onKeyDown={this.onKeyDownHandler}
         onFocus={() => this.setState({ focused: true })}
         onBlur={() => {
-          this.setState({ focused: false })
+          this.setState({ focused: false });
           this.props.updateQuestion({
             id: this.props.id,
             html: this.state.html,
@@ -133,8 +134,7 @@ class EditableBlock extends React.Component {
             ast: this.state.ast,
             raw: this.state.raw,
           });
-        }
-        }
+        }}
       />
     );
   }
