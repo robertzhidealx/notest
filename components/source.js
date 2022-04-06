@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import {
   ChevronDoubleLeftIcon,
@@ -15,6 +15,15 @@ const Source = ({
   const [isHidden, setIsHidden] = useState(false);
   const [temperature, setTemperature] = useState(0.5);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 900) setIsHidden(true);
+      else setIsHidden(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return isHidden ? (
     <button
       className='fixed flex items-center justify-center w-6 h-6 truncate transition-colors duration-150 ease-in rounded bottom-2 right-2 hover:bg-slate-200'
@@ -23,18 +32,14 @@ const Source = ({
       <ChevronDoubleLeftIcon className='w-5 h-5' />
     </button>
   ) : (
-    <div
-      className={clsx('w-[400px] flex-col flex-none bg-white border-l hidden', {
-        'lg:flex': !isHidden,
-      })}
-    >
+    <div className='w-[400px] flex flex-col flex-none bg-white border-l'>
       <textarea
         onChange={(e) => setSource(e.target.value)}
-        className='w-full flex-grow resize-none px-2 py-1.5 rounded-t-md outline-none border-b'
+        className='w-full flex-grow resize-none px-2 py-1.5 outline-none border-b'
         placeholder='Add source here!'
         value={source}
       />
-      <div className='flex w-full h-[40px] items-center rounded-b-md justify-between p-2'>
+      <div className='flex w-full h-[40px] items-center justify-between p-2'>
         <button
           className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in rounded hover:text-slate-700 text-slate-400'
           onClick={() => setIsHidden(true)}

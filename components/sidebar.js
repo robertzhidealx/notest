@@ -41,6 +41,15 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
   const formRef = useRef(null);
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) setIsHidden(true);
+      else setIsHidden(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     (async () => {
       const res = await noteService.getAll();
       setNotes(res);
@@ -77,10 +86,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
   ) : (
     <div
       className={clsx(
-        'w-[200px] flex-none hidden fixed min-h-screen bg-gray-100 border-r',
-        {
-          'sm:block': !isHidden,
-        }
+        'w-[200px] flex-none fixed min-h-screen bg-gray-100 border-r'
       )}
     >
       <div className='flex items-center justify-between px-3 py-2 border-b'>
@@ -98,12 +104,12 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
         </button>
       </div>
       <div>
-        <div
-          className='flex items-center justify-between px-3 pt-2 pb-1'
-          onClick={handleCreate}
-        >
-          <h2 className='mb-0 font-medium'>Notes</h2>
-          <div className='flex items-center gap-x-0.5 hover:bg-slate-300 rounded transition-colors duration-150 ease-in cursor-pointer select-none'>
+        <div className='flex items-center justify-between px-3 pt-2 pb-1'>
+          <h2 className='mb-0 font-medium select-none'>Notes</h2>
+          <div
+            className='flex items-center gap-x-0.5 hover:bg-slate-300 rounded transition-colors duration-150 ease-in cursor-pointer select-none'
+            onClick={handleCreate}
+          >
             <DocumentAddIcon className='w-4 h-4' />
             <span className='pr-0.5'>New</span>
           </div>
