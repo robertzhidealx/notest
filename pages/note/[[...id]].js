@@ -58,8 +58,8 @@ const Note = () => {
       setqObject(res.note.questions);
       setBlocks(res.note.content);
       setNoteObj(res.note);
-      const generated = [];
       const converted = [];
+      const generated = [];
       res.note.questions.generated.forEach((element) => {
         generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
       });
@@ -72,6 +72,7 @@ const Note = () => {
       setQs(converted);
     })();
   }, [router.query.id]);
+
 
   const handleHighlight = (e) => {
     setPopupOpen(true);
@@ -184,7 +185,9 @@ const Note = () => {
     const index = list.map((b) => b.blockId).indexOf(currentBlock.id);
     if(index != -1){ //ast updated so qustion must be deleted 
       list.splice(index, 1);
-      setqObject({generated: list, converted: qObject.converted});
+      setqObject({generated: list, converted: qObject.converted}, () => {
+        console.log(qObject);
+      });
       await noteService.update(
         noteObj._id,
         noteObj.title,
@@ -193,6 +196,11 @@ const Note = () => {
         { generated: list, converted: qObject.converted }
       );
     }
+    const generated = [];
+    list.forEach((element) => {
+      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
+    });
+    setGenQs(generated);
   }
 
   const addUpdateQuestionBlock = async (currentBlock) => {
@@ -211,7 +219,9 @@ const Note = () => {
         list.splice(index, 1);
       }
     }
-    setqObject({generated: list, converted: qObject.converted});
+    setqObject({generated: list, converted: qObject.converted}, () => {
+      console.log(qObject);
+    });
     await noteService.update(
       noteObj._id,
       noteObj.title,
@@ -219,6 +229,11 @@ const Note = () => {
       blocks,
       { generated: list, converted: qObject.converted }
     );
+    const generated = [];
+    list.forEach((element) => {
+      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
+    });
+    setGenQs(generated);
   }
 
   const addBlockHandler = async (currentBlock) => {
