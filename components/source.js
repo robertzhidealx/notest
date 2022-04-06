@@ -17,15 +17,15 @@ const Source = ({
 
   return isHidden ? (
     <button
-      className='fixed flex items-center justify-center w-6 h-6 truncate transition-colors duration-150 ease-in rounded bottom-2 right-2 hover:bg-slate-300'
+      className='fixed flex items-center justify-center w-6 h-6 truncate transition-colors duration-150 ease-in rounded bottom-2 right-2 hover:bg-slate-200'
       onClick={() => setIsHidden(false)}
     >
       <ChevronDoubleLeftIcon className='w-5 h-5' />
     </button>
   ) : (
     <div
-      className={clsx('w-[600px] flex-col bg-white border-l hidden', {
-        'md:flex': !isHidden,
+      className={clsx('w-[400px] flex-col flex-none bg-white border-l hidden', {
+        'lg:flex': !isHidden,
       })}
     >
       <textarea
@@ -43,7 +43,7 @@ const Source = ({
         </button>
         <div className='flex items-center gap-2'>
           <Dropdown
-            width={100}
+            width={110}
             options={[
               { label: 'Factual', cb: () => setTemperature(0.2) },
               { label: 'Conceptual', cb: () => setTemperature(0.6) },

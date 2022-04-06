@@ -21,7 +21,7 @@ const ConvertedQuestion = ({ text, indices }) => {
   const ans = text.substring(l, r);
 
   return (
-    <form onSubmit={formik.handleSubmit} className='flex gap-2 text-sm'>
+    <form onSubmit={formik.handleSubmit} className='flex w-full gap-2 text-sm'>
       <button
         className='transition-colors duration-150 ease-in hover:text-slate-400'
         type='submit'

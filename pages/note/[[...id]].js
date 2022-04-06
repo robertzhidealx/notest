@@ -306,13 +306,13 @@ const Note = () => {
       >
         {!onHomePage && (
           <>
-            <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded-md bg-slate-200'>
+            <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded bg-slate-200'>
               <button
                 onClick={() => setTestMode(false)}
                 className={clsx(
-                  'px-2 flex justify-center items-center text-sm h-6',
+                  'px-2 flex justify-center items-center text-sm h-6 border',
                   {
-                    'bg-white rounded-md shadow-md': !testMode,
+                    'bg-white rounded': !testMode,
                   }
                 )}
               >
@@ -321,9 +321,9 @@ const Note = () => {
               <button
                 onClick={() => setTestMode(true)}
                 className={clsx(
-                  'px-2 flex justify-center items-center text-sm h-6',
+                  'px-2 flex justify-center items-center text-sm h-6 border',
                   {
-                    'bg-white rounded-md shadow-md': testMode,
+                    'bg-white rounded': testMode,
                   }
                 )}
               >
@@ -353,8 +353,6 @@ const Note = () => {
                           deleteBlock={removeBlockHandler}
                           updateQuestion={addUpdateQuestionBlock}
                           delQuestion={deleteQuestion}
-                          isStart={index === 0}
-                          isEnd={index === blocks.length - 1}
                         />
                       );
                     })}

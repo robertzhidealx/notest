@@ -20,9 +20,17 @@ const GeneratedQuestion = ({ q, ans }) => {
 
   return (
     <form onSubmit={formik.handleSubmit} className='flex gap-2 text-sm'>
-      <div className='flex-col justify-center'>
-        <div className='mb-1'>{q}</div>
-        <div className='ml-4'>
+      <div className='flex-col justify-center w-full gap-2'>
+        <div className='flex items-center gap-1 mb-1'>
+          <span className='flex items-center justify-center w-4 h-4 p-1 text-xs font-medium text-red-500 border-[1.5px] border-red-500 rounded'>
+            Q
+          </span>
+          <p className='mb-0'>{q}</p>
+        </div>
+        <div className='flex items-center gap-1 mb-1'>
+          <span className='flex items-center justify-center w-4 h-4 p-1 text-xs font-medium text-blue-500 border-[1.5px] border-blue-500 rounded'>
+            A
+          </span>
           <div className='flex items-center'>
             <input
               type='text'
@@ -44,8 +52,8 @@ const GeneratedQuestion = ({ q, ans }) => {
               <CheckIcon className='w-5 h-5' />
             </button>
           </div>
-          {status === wrong && <p>{ans}</p>}
         </div>
+        {status === wrong && <p className='mb-0'>{ans}</p>}
       </div>
     </form>
   );

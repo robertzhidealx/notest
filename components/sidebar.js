@@ -69,7 +69,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
 
   return isHidden ? (
     <button
-      className='fixed flex items-center justify-center w-6 h-6 my-2 transition-colors duration-150 ease-in rounded top-1 left-1 hover:bg-slate-300'
+      className='fixed flex items-center justify-center w-6 h-6 my-2 transition-colors duration-150 ease-in rounded top-1 left-1 hover:bg-slate-200'
       onClick={() => setIsHidden(false)}
     >
       <ChevronDoubleRightIcon className='w-5 h-5' />
@@ -91,7 +91,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
           Notest
         </h1>
         <button
-          className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in rounded hover:bg-slate-300'
+          className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in hover:text-slate-700 text-slate-400'
           onClick={() => setIsHidden(true)}
         >
           <ChevronDoubleLeftIcon className='w-5 h-5' />

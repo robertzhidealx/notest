@@ -6,12 +6,14 @@ const QuestionList = ({ type, qs }) => {
   const [show, setShow] = useState(false);
 
   return (
-    <div className='self-start w-full p-2 mb-3 bg-white rounded-md shadow-md'>
+    <div className='self-start w-full p-2 mb-3 bg-white border rounded shadow'>
       <div
-        className={clsx('flex items-center justify-between', { 'mb-2': show })}
+        className={clsx('flex items-center justify-between select-none', {
+          'mb-2': show,
+        })}
         onClick={() => setShow((show) => !show)}
       >
-        <h1 className='font-medium'>{`${type} questions`}</h1>
+        <h1 className='mb-0 font-medium'>{`${type} questions`}</h1>
         {show ? (
           <ChevronDownIcon className='w-5 h-5' />
         ) : (
