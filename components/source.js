@@ -26,16 +26,16 @@ const Source = ({
 
   return isHidden ? (
     <button
-      className='fixed flex items-center justify-center w-6 h-6 truncate transition-colors duration-150 ease-in rounded bottom-2 right-2 hover:bg-slate-200'
+      className='fixed flex items-center justify-center w-6 h-6 truncate transition-colors duration-150 ease-in rounded bottom-2 right-2 hover:bg-slate-200 dark:hover:bg-slate-500'
       onClick={() => setIsHidden(false)}
     >
-      <ChevronDoubleLeftIcon className='w-5 h-5' />
+      <ChevronDoubleLeftIcon className='w-5 h-5 dark:text-slate-100' />
     </button>
   ) : (
-    <div className='w-[400px] flex flex-col flex-none bg-white border-l'>
+    <div className='w-[400px] flex flex-col flex-none bg-white dark:bg-slate-800 border-l dark:text-white'>
       <textarea
         onChange={(e) => setSource(e.target.value)}
-        className='w-full flex-grow resize-none px-2 py-1.5 outline-none border-b'
+        className='w-full flex-grow resize-none px-2 py-1.5 dark:bg-slate-900 outline-none border-b'
         placeholder='Add source here!'
         value={source}
       />
@@ -44,7 +44,7 @@ const Source = ({
           className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in rounded hover:text-slate-700 text-slate-400'
           onClick={() => setIsHidden(true)}
         >
-          <ChevronDoubleRightIcon className='w-5 h-5' />
+          <ChevronDoubleRightIcon className='w-5 h-5 dark:text-slate-100' />
         </button>
         <div className='flex items-center gap-2'>
           <Dropdown

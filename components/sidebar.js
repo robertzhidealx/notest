@@ -81,17 +81,17 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
       className='fixed flex items-center justify-center w-6 h-6 my-2 transition-colors duration-150 ease-in rounded top-1 left-1 hover:bg-slate-200'
       onClick={() => setIsHidden(false)}
     >
-      <ChevronDoubleRightIcon className='w-5 h-5' />
+      <ChevronDoubleRightIcon className='w-5 h-5 dark:text-white' />
     </button>
   ) : (
     <div
       className={clsx(
-        'w-[200px] flex-none fixed min-h-screen bg-gray-100 border-r'
+        'w-[200px] flex-none fixed min-h-screen bg-gray-100 dark:bg-slate-900 border-r'
       )}
     >
       <div className='flex items-center justify-between px-3 py-2 border-b'>
         <h1
-          className='mb-0 text-xl font-medium cursor-pointer'
+          className='mb-0 text-xl font-medium cursor-pointer dark:text-white'
           onClick={() => (window.location.href = '/note')}
         >
           Notest
@@ -100,17 +100,17 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
           className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in hover:text-slate-700 text-slate-400'
           onClick={() => setIsHidden(true)}
         >
-          <ChevronDoubleLeftIcon className='w-5 h-5' />
+          <ChevronDoubleLeftIcon className='w-5 h-5 dark:text-white' />
         </button>
       </div>
       <div>
-        <div className='flex items-center justify-between px-3 pt-2 pb-1'>
-          <h2 className='mb-0 font-medium select-none'>Notes</h2>
+        <div className='flex items-center justify-between px-3 pt-2 pb-1 dark:text-white'>
+          <h2 className='mb-0 font-medium select-none dark:text-white '>Notes</h2>
           <div
-            className='flex items-center gap-x-0.5 hover:bg-slate-300 rounded transition-colors duration-150 ease-in cursor-pointer select-none'
+            className='flex items-center gap-x-0.5 hover:bg-slate-300 dark:hover:bg-slate-600 rounded transition-colors duration-150 ease-in cursor-pointer select-none'
             onClick={handleCreate}
           >
-            <DocumentAddIcon className='w-4 h-4' />
+            <DocumentAddIcon className='w-4 h-4 dark:text-white'/>
             <span className='pr-0.5'>New</span>
           </div>
         </div>
@@ -119,7 +119,7 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
             <form key={note.id} onSubmit={formik.handleSubmit} ref={formRef}>
               <input
                 autoFocus
-                className='flex items-center w-full px-3 text-left outline-none bg-slate-300 h-7'
+                className='flex items-center w-full px-3 text-left outline-none bg-slate-300 dark:bg-slate-600 dark:text-gray-100 h-7'
                 name='name'
                 type='text'
                 value={formik.values.name}
@@ -134,9 +134,9 @@ const Sidebar = ({ current, isHidden, setIsHidden }) => {
                 // router.push(`/note/${note._id}`);
               }}
               className={clsx(
-                'w-full px-3 text-left transition-colors duration-150 ease-in h-7 hover:bg-slate-300 truncate',
+                'w-full px-3 text-left transition-colors duration-150 ease-in h-7 hover:bg-slate-300 dark:hover:bg-slate-700 truncate dark:text-white',
                 {
-                  'bg-slate-300': current && note._id === current[0],
+                  'bg-slate-300 dark:bg-slate-600': current && note._id === current[0],
                 }
               )}
             >

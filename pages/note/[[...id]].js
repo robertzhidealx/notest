@@ -14,6 +14,7 @@ import Sidebar from '../../components/sidebar';
 import { compiler } from '../../lib/engine/compiler';
 import { interpreter } from '../../lib/engine/interpreter';
 import { initialBlock, setCaretToEnd } from '../../lib/utils';
+import { Button } from 'antd';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -72,6 +73,14 @@ const Note = () => {
       setQs(converted);
     })();
   }, [router.query.id]);
+
+  useEffect(() => {
+    if(localStorage.getItem('mode') == 'light'){
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+    }, []);
 
   const handleHighlight = (e) => {
     setPopupOpen(true);
@@ -300,19 +309,33 @@ const Note = () => {
       />
       <div
         className={clsx(
-          'flex flex-col items-center bg-white px-8 py-2 w-full overflow-y-auto min-h-screen',
+          'flex flex-col items-center bg-white dark:bg-slate-800 px-8 py-2 w-full overflow-y-auto min-h-screen',
           { 'sm:ml-[200px]': !sidebarHidden }
         )}
       >
+        <div className='inset-x-0 bottom-0'>
+          <Button onClick={() => {
+            localStorage.setItem('mode', 'dark');
+            document.documentElement.classList.add('dark')
+          }} className='flex items-center justify-center h-6 px-2 text-sm bg-slate-300 dark:bg-slate-800 dark:border-gray-500 dark:text-white'>
+            Dark Mode
+          </Button>
+          <Button onClick={() => {
+            localStorage.setItem('mode', 'light');
+            document.documentElement.classList.remove('dark')
+          }} className='flex items-center justify-center h-6 px-2 text-sm bg-slate-300 dark:bg-slate-800 dark:border-gray-500 dark:text-white'>
+            Light Mode
+          </Button>
+        </div>
         {!onHomePage && (
           <>
-            <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded bg-slate-200'>
+            <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded bg-slate-200 dark:bg-slate-700'>
               <button
                 onClick={() => setTestMode(false)}
                 className={clsx(
-                  'px-2 flex justify-center items-center text-sm h-6 border',
+                  'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
                   {
-                    'bg-white rounded': !testMode,
+                    'bg-white rounded dark:bg-slate-400 border-gray-50': !testMode,
                   }
                 )}
               >
@@ -321,9 +344,9 @@ const Note = () => {
               <button
                 onClick={() => setTestMode(true)}
                 className={clsx(
-                  'px-2 flex justify-center items-center text-sm h-6 border',
+                  'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
                   {
-                    'bg-white rounded': testMode,
+                    'bg-white rounded dark:bg-slate-400 dark:border-gray-500': testMode,
                   }
                 )}
               >
@@ -337,7 +360,7 @@ const Note = () => {
               </div>
             ) : (
               <>
-                <div className='flex flex-col w-full bg-white rounded'>
+                <div className='flex flex-col w-full bg-white rounded dark:bg-slate-800'>
                   <Highlightable handleHighlight={handleHighlight}>
                     {blocks.map((block, index) => {
                       return (
@@ -368,7 +391,7 @@ const Note = () => {
                   <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
                     <button
                       onClick={handleConvert}
-                      className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 easin-in-out'
+                      className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 dark:hover:bg-slate-600 easin-in-out'
                     >
                       convert
                     </button>

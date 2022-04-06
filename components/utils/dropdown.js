@@ -29,11 +29,11 @@ const Dropdown = ({ width, options, _default }) => {
     >
       <div className='flex items-center justify-between'>
         <div className='flex-none'>{selected.content || selected.label}</div>
-        <ChevronUpIcon className='w-4 h-4 text-slate-600' />
+        <ChevronUpIcon className='w-4 h-4 text-slate-600 dark:text-slate-200' />
       </div>
       {expanded && (
         <div
-          className='absolute bottom-7 bg-white border -translate-x-[9px] rounded py-[2.5px] flex flex-col'
+          className='absolute bottom-7 bg-white dark:bg-slate-800 border -translate-x-[9px] rounded py-[2.5px] flex flex-col'
           style={{ width }}
         >
           {options.map((option) => (
@@ -41,9 +41,9 @@ const Dropdown = ({ width, options, _default }) => {
               key={option.label}
               onClick={(e) => handleSelect(e, option)}
               className={clsx(
-                'cursor-pointer py-1 px-2 hover:bg-slate-200 transition-colors ease-in duration-150',
+                'cursor-pointer py-1 px-2 hover:bg-slate-200 dark:hover:bg-slate-400 transition-colors ease-in duration-150',
                 {
-                  'bg-slate-200': option.label === selected.label,
+                  'bg-slate-200 dark:bg-slate-600': option.label === selected.label,
                 }
               )}
             >
