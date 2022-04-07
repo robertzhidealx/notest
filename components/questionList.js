@@ -5,6 +5,7 @@ import clsx from 'clsx';
 const QuestionList = ({ type, qs }) => {
   const [show, setShow] = useState(false);
 
+  console.log(qs)
   return (
     <div className='self-start w-full p-2 mb-3 bg-white border rounded shadow dark:bg-slate-900 dark:border-gray-300'>
       <div
@@ -23,7 +24,11 @@ const QuestionList = ({ type, qs }) => {
       {show && (
         <div className='flex flex-col gap-2 dark:text-slate-200'>
           {qs.length ? (
-            qs.map((x) => x)
+            <div>
+              {/* TODO: Update score dynamically */}
+            Score: 0/{qs.length} 
+            {qs.map((x) => x)}
+            </div>
           ) : (
             <div className='text-sm italic text-center text-slate-400 dark:text-white'>
               Nothing yet...
@@ -31,6 +36,7 @@ const QuestionList = ({ type, qs }) => {
           )}
         </div>
       )}
+    
     </div>
   );
 };

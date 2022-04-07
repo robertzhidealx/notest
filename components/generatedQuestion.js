@@ -52,6 +52,12 @@ const GeneratedQuestion = ({ q, ans }) => {
               <CheckIcon className='w-5 h-5' />
             </button>
           </div>
+          {/* Please help with the CSS */}
+            <button type='button' className=' dark:bg-slate-400 items-center text-sm h-6 dark:border-gray-500' onClick={(e) => setStatus(correct)}>I am correct</button>
+            -
+            <button type='button' className='items-center text-sm h-6 dark:border-gray-500' onClick={(e) => console.log("TODO: Show past attempts")}>See past attempts</button>
+
+            {/* <button onClick={setStatus(correct)}>I am correct</button> */}
         </div>
         {status === wrong && <p className='mb-0'>{ans}</p>}
       </div>
