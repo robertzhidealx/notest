@@ -8,7 +8,7 @@ const wrong = 2;
 
 const GeneratedQuestion = ({ q, ans, setScore }) => {
   const [status, setStatus] = useState(pending);
-  setScore(3)
+  // setScore(3)
   const formik = useFormik({
     initialValues: {
       answer: '',
@@ -54,11 +54,22 @@ const GeneratedQuestion = ({ q, ans, setScore }) => {
             </button>
           </div>
           {/* Please help with the CSS */}
-            <button type='button' className=' dark:bg-slate-400 items-center text-sm h-6 dark:border-gray-500' onClick={(e) => setStatus(correct)}>I am correct</button>
-            -
-            <button type='button' className='items-center text-sm h-6 dark:border-gray-500' onClick={(e) => console.log("TODO: Show past attempts")}>See past attempts</button>
-
-            {/* <button onClick={setStatus(correct)}>I am correct</button> */}
+          <button
+            type='button'
+            className='items-center h-6 text-sm  dark:bg-slate-400 dark:border-gray-500'
+            onClick={(e) => setStatus(correct)}
+          >
+            I am correct
+          </button>
+          -
+          <button
+            type='button'
+            className='items-center h-6 text-sm dark:border-gray-500'
+            onClick={(e) => console.log('TODO: Show past attempts')}
+          >
+            See past attempts
+          </button>
+          {/* <button onClick={setStatus(correct)}>I am correct</button> */}
         </div>
         {status === wrong && <p className='mb-0'>{ans}</p>}
       </div>
