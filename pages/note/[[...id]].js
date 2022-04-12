@@ -43,11 +43,11 @@ const Note = () => {
   const [qs, setQs] = useState([]); // the converted questions
   const [genQs, setGenQs] = useState([]); // the generated questions
   const [doneGenerating, setDoneGenerating] = useState(true); // whether the generated questions have been generated
-  const [showSource, setShowSource] = useState(false);
   const [qObject, setqObject] = useState(initialQObject);
 
   const [onHomePage, setOnHomePage] = useState(false); // whether the user is on the /note route
   const [sidebarHidden, setSidebarHidden] = useState(false); // whether the sidebar is hidden
+  const [sourceHidden, setSourceHidden] = useState(false); // whether the source is hidden
 
   useEffect(() => {
     (async () => {
@@ -327,48 +327,50 @@ const Note = () => {
         />
         <div
           className={clsx(
-            'flex flex-col items-center bg-white dark:bg-slate-800 px-8 py-2 w-full overflow-y-auto min-h-screen',
-            { 'sm:ml-[200px]': !sidebarHidden }
+            'flex flex-col items-center bg-white dark:bg-slate-800 px-8 pb-2 w-full overflow-y-auto min-h-screen',
+            { 'sm:ml-[200px]': !sidebarHidden, 'sm:mr-[400px]': !sourceHidden }
           )}
         >
           {!onHomePage && (
-            <>
-              <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded intro-testing-mode-step bg-slate-200 dark:bg-slate-700'>
-                <button
-                  onClick={() => setTestMode(false)}
-                  className={clsx(
-                    'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
-                    {
-                      'bg-white rounded dark:bg-slate-400 border-gray-50':
-                        !testMode,
-                    }
-                  )}
-                >
-                  Notes
-                </button>
-                <button
-                  onClick={() => setTestMode(true)}
-                  className={clsx(
-                    'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
-                    {
-                      'bg-white rounded dark:bg-slate-400 dark:border-gray-500':
-                        testMode,
-                    }
-                  )}
-                >
-                  Testing
-                </button>
+            <div className='w-full'>
+              <div className='fixed w-full pt-2 bg-white dark:bg-slate-800'>
+                <div className='flex items-center self-start justify-center w-[126px] h-8 px-1 rounded intro-testing-mode-step bg-slate-200 dark:bg-slate-700'>
+                  <button
+                    onClick={() => setTestMode(false)}
+                    className={clsx(
+                      'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
+                      {
+                        'bg-white rounded dark:bg-slate-400 border-gray-50':
+                          !testMode,
+                      }
+                    )}
+                  >
+                    Notes
+                  </button>
+                  <button
+                    onClick={() => setTestMode(true)}
+                    className={clsx(
+                      'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
+                      {
+                        'bg-white rounded dark:bg-slate-400 dark:border-gray-500':
+                          testMode,
+                      }
+                    )}
+                  >
+                    Testing
+                  </button>
+                </div>
               </div>
               {testMode ? (
-                <div className='w-full'>
+                <div className='flex flex-col w-full gap-2 mt-12'>
                   <QuestionList type='Generated' qs={genQs} />
                   <QuestionList type='Converted' qs={qs} />
                 </div>
               ) : (
                 <>
-                  <div className='flex flex-col w-full bg-white rounded dark:bg-slate-800 intro-notes-step'>
+                  <div className='flex flex-col w-full mt-12 bg-white rounded dark:bg-slate-800 intro-notes-step'>
                     <Highlightable handleHighlight={handleHighlight}>
-                      {blocks.map((block, index) => {
+                      {blocks.map((block) => {
                         return (
                           <EditableBlock
                             key={block.id}
@@ -405,15 +407,19 @@ const Note = () => {
                   </Popup>
                 </>
               )}
-            </>
+            </div>
           )}
         </div>
-        <Source
-          source={source}
-          setSource={setSource}
-          handleGenerateQuestions={handleGenerateQuestions}
-          doneGenerating={doneGenerating}
-        />
+        {!onHomePage && (
+          <Source
+            source={source}
+            setSource={setSource}
+            handleGenerateQuestions={handleGenerateQuestions}
+            doneGenerating={doneGenerating}
+            isHidden={sourceHidden}
+            setIsHidden={setSourceHidden}
+          />
+        )}
       </div>
     </>
   );

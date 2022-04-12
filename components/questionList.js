@@ -4,11 +4,11 @@ import clsx from 'clsx';
 
 const QuestionList = ({ type, qs }) => {
   const [show, setShow] = useState(false);
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState(0);
 
-  console.log(qs)
+  console.log(qs);
   return (
-    <div className='self-start w-full p-2 mb-3 bg-white border rounded shadow dark:bg-slate-900 dark:border-gray-300'>
+    <div className='self-start w-full p-2 bg-white border rounded shadow dark:bg-slate-900 dark:border-gray-300'>
       <div
         className={clsx('flex items-center justify-between select-none', {
           'mb-2': show,
@@ -17,9 +17,9 @@ const QuestionList = ({ type, qs }) => {
       >
         <h1 className='mb-0 font-medium dark:text-slate-50'>{`${type} questions`}</h1>
         {show ? (
-          <ChevronDownIcon className='w-5 h-5 dark:text-white'/>
+          <ChevronDownIcon className='w-5 h-5 dark:text-white' />
         ) : (
-          <ChevronRightIcon className='w-5 h-5 dark:text-white'/>
+          <ChevronRightIcon className='w-5 h-5 dark:text-white' />
         )}
       </div>
       {show && (
@@ -27,9 +27,9 @@ const QuestionList = ({ type, qs }) => {
           {qs.length ? (
             <div>
               {/* TODO: Update score dynamically */}
-            Score: {score}/{qs.length} 
-            {/* {qs.map((x) => x.setScore = setScore)} DOESN'T WORK?? */}
-            {qs.map((x) => x)}
+              Score: {score}/{qs.length}
+              {/* {qs.map((x) => x.setScore = setScore)} DOESN'T WORK?? */}
+              {qs.map((x) => x)}
             </div>
           ) : (
             <div className='text-sm italic text-center text-slate-400 dark:text-white'>
@@ -38,7 +38,6 @@ const QuestionList = ({ type, qs }) => {
           )}
         </div>
       )}
-    
     </div>
   );
 };
