@@ -15,6 +15,8 @@ import { compiler } from '../../lib/engine/compiler';
 import { interpreter } from '../../lib/engine/interpreter';
 import { initialBlock, setCaretToEnd } from '../../lib/utils';
 import { Button } from 'antd';
+import Joyride from 'react-joyride';
+
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -22,10 +24,34 @@ const uid = () => {
 
 const initialQObject = { generated: [], converted: [] };
 
+const steps = [
+  {
+    content: <h2>Welcome to Notest</h2>,
+    locale: { skip: <strong aria-label="skip">S-K-I-P</strong> },
+    placement: 'center',
+    target: 'body',
+  },
+  {
+    target: '.intro-notes-step',
+    content: 'This is your main notes section, where you can take notes',
+  },
+  {
+    target: '.intro-source-step textarea',
+    content: 'You can add text based information here, such as the first paragraph from an article',
+  },
+  {
+    target: '.intro-generate-question-step button',
+    content: 'You can then generate questions to test yourself which would appear in the main notes',
+  },
+  {
+    target: '.intro-testing-mode-step',
+    content: 'You can test yourself with the questions by switching to test mode. Good luck!',
+  },
+]
 const Note = () => {
   const router = useRouter();
   const [noteObj, setNoteObj] = useState({});
-
+  
   const [blocks, setBlocks] = useState([initialBlock]);
   const [source, setSource] = useState('');
   const [testMode, setTestMode] = useState(false);
@@ -33,6 +59,8 @@ const Note = () => {
   const [previousBlock, setPreviousBlock] = useState(null);
   const [addingBlock, setAddingBlock] = useState(false);
   const [removingBlock, setRemovingBlock] = useState(false);
+  
+  const [tutorial, setTutorial] = useState(false); // whether the tutorial steps are made
 
   // highlight and convert logic
   const [popupOpen, setPopupOpen] = useState(false); // popup open state
@@ -299,8 +327,24 @@ const Note = () => {
       );
     }
   };
-
+  
   return (
+    <>
+      <Joyride
+          // callback={this.handleJoyrideCallback}
+          continuous={true}
+          // getHelpers={this.getHelpers}
+          run={tutorial}
+          scrollToFirstStep={true}
+          showProgress={true}
+          showSkipButton={true}
+          steps={steps}
+          styles={{
+            options: {
+              zIndex: 10000,
+            },
+          }}
+        />
     <div className='flex'>
       <Sidebar
         current={router.query.id}
@@ -311,9 +355,10 @@ const Note = () => {
         className={clsx(
           'flex flex-col items-center bg-white dark:bg-slate-800 px-8 py-2 w-full overflow-y-auto min-h-screen',
           { 'sm:ml-[200px]': !sidebarHidden }
-        )}
+          )}
       >
         <div className='inset-x-0 bottom-0'>
+          <Button onClick={e => setTutorial(true)}>Need help?</Button>
           <Button onClick={() => {
             localStorage.setItem('mode', 'dark');
             document.documentElement.classList.add('dark')
@@ -329,7 +374,7 @@ const Note = () => {
         </div>
         {!onHomePage && (
           <>
-            <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded bg-slate-200 dark:bg-slate-700'>
+            <div className='intro-testing-mode-step flex items-center self-start justify-center h-8 px-1 mb-2 rounded bg-slate-200 dark:bg-slate-700'>
               <button
                 onClick={() => setTestMode(false)}
                 className={clsx(
@@ -353,6 +398,7 @@ const Note = () => {
                 Testing
               </button>
             </div>
+            
             {testMode ? (
               <div className='w-full'>
                 <QuestionList type='Generated' qs={genQs} />
@@ -360,7 +406,7 @@ const Note = () => {
               </div>
             ) : (
               <>
-                <div className='flex flex-col w-full bg-white rounded dark:bg-slate-800'>
+                <div className='flex flex-col w-full bg-white rounded dark:bg-slate-800 intro-notes-step'>
                   <Highlightable handleHighlight={handleHighlight}>
                     {blocks.map((block, index) => {
                       return (
@@ -409,6 +455,7 @@ const Note = () => {
         doneGenerating={doneGenerating}
       />
     </div>
+    </>
   );
 };
 

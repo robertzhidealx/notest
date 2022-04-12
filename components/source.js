@@ -32,7 +32,7 @@ const Source = ({
       <ChevronDoubleLeftIcon className='w-5 h-5 dark:text-slate-100' />
     </button>
   ) : (
-    <div className='w-[400px] flex flex-col flex-none bg-white dark:bg-slate-800 border-l dark:text-white'>
+    <div className='intro-source-step w-[400px] flex flex-col flex-none bg-white dark:bg-slate-800 border-l dark:text-white'>
       <textarea
         onChange={(e) => setSource(e.target.value)}
         className='w-full flex-grow resize-none px-2 py-1.5 dark:bg-slate-900 outline-none border-b'
@@ -56,18 +56,20 @@ const Source = ({
             ]}
             _default={'Factual'}
           />
-          <button
-            disabled={!doneGenerating}
-            onClick={() => handleGenerateQuestions(temperature)}
-            className={clsx(
-              'text-sm text-center h-full hover:text-sky-600 transition-colors duration-150 ease-in font-medium',
-              {
-                'cursor-not-allowed': !doneGenerating,
-              }
-            )}
-          >
-            Generate questions!
-          </button>
+          <div className='intro-generate-question-step'>
+            <button
+              disabled={!doneGenerating}
+              onClick={() => handleGenerateQuestions(temperature)}
+              className={clsx(
+                'text-sm text-center h-full hover:text-sky-600 transition-colors duration-150 ease-in font-medium',
+                {
+                  'cursor-not-allowed': !doneGenerating,
+                }
+              )}
+            >
+              Generate questions!
+            </button>
+          </div>
         </div>
       </div>
     </div>

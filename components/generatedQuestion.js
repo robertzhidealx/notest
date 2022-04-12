@@ -6,8 +6,9 @@ const pending = 0;
 const correct = 1;
 const wrong = 2;
 
-const GeneratedQuestion = ({ q, ans }) => {
+const GeneratedQuestion = ({ q, ans, setScore }) => {
   const [status, setStatus] = useState(pending);
+  setScore(3)
   const formik = useFormik({
     initialValues: {
       answer: '',

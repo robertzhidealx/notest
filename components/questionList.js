@@ -4,6 +4,7 @@ import clsx from 'clsx';
 
 const QuestionList = ({ type, qs }) => {
   const [show, setShow] = useState(false);
+  const [score, setScore] = useState(0)
 
   console.log(qs)
   return (
@@ -26,7 +27,8 @@ const QuestionList = ({ type, qs }) => {
           {qs.length ? (
             <div>
               {/* TODO: Update score dynamically */}
-            Score: 0/{qs.length} 
+            Score: {score}/{qs.length} 
+            {/* {qs.map((x) => x.setScore = setScore)} DOESN'T WORK?? */}
             {qs.map((x) => x)}
             </div>
           ) : (
