@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { PencilIcon } from '@heroicons/react/outline';
+import Joyride from 'react-joyride';
 import EditableBlock from '../../components/editableBlock';
 import Highlightable from '../../components/utils/highlightable';
 import Popup from '../../components/utils/popup';
@@ -13,10 +13,7 @@ import Source from '../../components/source';
 import Sidebar from '../../components/sidebar';
 import { compiler } from '../../lib/engine/compiler';
 import { interpreter } from '../../lib/engine/interpreter';
-import { initialBlock, setCaretToEnd } from '../../lib/utils';
-import { Button } from 'antd';
-import Joyride from 'react-joyride';
-
+import { initialBlock, setCaretToEnd, tutorialSteps } from '../../lib/utils';
 
 const uid = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -24,34 +21,10 @@ const uid = () => {
 
 const initialQObject = { generated: [], converted: [] };
 
-const steps = [
-  {
-    content: <h2>Welcome to Notest</h2>,
-    locale: { skip: <strong aria-label="skip">S-K-I-P</strong> },
-    placement: 'center',
-    target: 'body',
-  },
-  {
-    target: '.intro-notes-step',
-    content: 'This is your main notes section, where you can take notes',
-  },
-  {
-    target: '.intro-source-step textarea',
-    content: 'You can add text based information here, such as the first paragraph from an article',
-  },
-  {
-    target: '.intro-generate-question-step button',
-    content: 'You can then generate questions to test yourself which would appear in the main notes',
-  },
-  {
-    target: '.intro-testing-mode-step',
-    content: 'You can test yourself with the questions by switching to test mode. Good luck!',
-  },
-]
 const Note = () => {
   const router = useRouter();
   const [noteObj, setNoteObj] = useState({});
-  
+
   const [blocks, setBlocks] = useState([initialBlock]);
   const [source, setSource] = useState('');
   const [testMode, setTestMode] = useState(false);
@@ -59,8 +32,8 @@ const Note = () => {
   const [previousBlock, setPreviousBlock] = useState(null);
   const [addingBlock, setAddingBlock] = useState(false);
   const [removingBlock, setRemovingBlock] = useState(false);
-  
-  const [tutorial, setTutorial] = useState(false); // whether the tutorial steps are made
+
+  const [showTutorial, setShowTutorial] = useState(false); // whether the tutorial steps are made
 
   // highlight and convert logic
   const [popupOpen, setPopupOpen] = useState(false); // popup open state
@@ -103,12 +76,12 @@ const Note = () => {
   }, [router.query.id]);
 
   useEffect(() => {
-    if(localStorage.getItem('mode') == 'light'){
+    if (localStorage.getItem('mode') == 'light') {
       document.documentElement.classList.remove('dark');
     } else {
       document.documentElement.classList.add('dark');
     }
-    }, []);
+  }, []);
 
   const handleHighlight = (e) => {
     setPopupOpen(true);
@@ -327,134 +300,121 @@ const Note = () => {
       );
     }
   };
-  
+
   return (
     <>
       <Joyride
-          // callback={this.handleJoyrideCallback}
-          continuous={true}
-          // getHelpers={this.getHelpers}
-          run={tutorial}
-          scrollToFirstStep={true}
-          showProgress={true}
-          showSkipButton={true}
-          steps={steps}
-          styles={{
-            options: {
-              zIndex: 10000,
-            },
-          }}
+        // callback={this.handleJoyrideCallback}
+        continuous={true}
+        // getHelpers={this.getHelpers}
+        run={showTutorial}
+        scrollToFirstStep={true}
+        showProgress={true}
+        showSkipButton={true}
+        steps={tutorialSteps}
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+      />
+      <div className='flex'>
+        <Sidebar
+          current={router.query.id}
+          isHidden={sidebarHidden}
+          setIsHidden={setSidebarHidden}
+          setShowTutorial={setShowTutorial}
         />
-    <div className='flex'>
-      <Sidebar
-        current={router.query.id}
-        isHidden={sidebarHidden}
-        setIsHidden={setSidebarHidden}
-      />
-      <div
-        className={clsx(
-          'flex flex-col items-center bg-white dark:bg-slate-800 px-8 py-2 w-full overflow-y-auto min-h-screen',
-          { 'sm:ml-[200px]': !sidebarHidden }
+        <div
+          className={clsx(
+            'flex flex-col items-center bg-white dark:bg-slate-800 px-8 py-2 w-full overflow-y-auto min-h-screen',
+            { 'sm:ml-[200px]': !sidebarHidden }
           )}
-      >
-        <div className='inset-x-0 bottom-0'>
-          <Button onClick={e => setTutorial(true)}>Need help?</Button>
-          <Button onClick={() => {
-            localStorage.setItem('mode', 'dark');
-            document.documentElement.classList.add('dark')
-          }} className='flex items-center justify-center h-6 px-2 text-sm bg-slate-300 dark:bg-slate-800 dark:border-gray-500 dark:text-white'>
-            Dark Mode
-          </Button>
-          <Button onClick={() => {
-            localStorage.setItem('mode', 'light');
-            document.documentElement.classList.remove('dark')
-          }} className='flex items-center justify-center h-6 px-2 text-sm bg-slate-300 dark:bg-slate-800 dark:border-gray-500 dark:text-white'>
-            Light Mode
-          </Button>
-        </div>
-        {!onHomePage && (
-          <>
-            <div className='intro-testing-mode-step flex items-center self-start justify-center h-8 px-1 mb-2 rounded bg-slate-200 dark:bg-slate-700'>
-              <button
-                onClick={() => setTestMode(false)}
-                className={clsx(
-                  'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
-                  {
-                    'bg-white rounded dark:bg-slate-400 border-gray-50': !testMode,
-                  }
-                )}
-              >
-                Notes
-              </button>
-              <button
-                onClick={() => setTestMode(true)}
-                className={clsx(
-                  'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
-                  {
-                    'bg-white rounded dark:bg-slate-400 dark:border-gray-500': testMode,
-                  }
-                )}
-              >
-                Testing
-              </button>
-            </div>
-            
-            {testMode ? (
-              <div className='w-full'>
-                <QuestionList type='Generated' qs={genQs} />
-                <QuestionList type='Converted' qs={qs} />
-              </div>
-            ) : (
-              <>
-                <div className='flex flex-col w-full bg-white rounded dark:bg-slate-800 intro-notes-step'>
-                  <Highlightable handleHighlight={handleHighlight}>
-                    {blocks.map((block, index) => {
-                      return (
-                        <EditableBlock
-                          key={block.id}
-                          id={block.id}
-                          tag={block.tag}
-                          html={block.html}
-                          ast={block.ast}
-                          raw={block.raw}
-                          updatePage={updatePageHandler}
-                          addBlock={addBlockHandler}
-                          deleteBlock={removeBlockHandler}
-                          updateQuestion={addUpdateQuestionBlock}
-                          delQuestion={deleteQuestion}
-                        />
-                      );
-                    })}
-                  </Highlightable>
-                </div>
-                <Popup
-                  top={location.top}
-                  left={location.left}
-                  height={location.height}
-                  popupOpen={popupOpen}
-                  setPopupOpen={setPopupOpen}
+        >
+          {!onHomePage && (
+            <>
+              <div className='flex items-center self-start justify-center h-8 px-1 mb-2 rounded intro-testing-mode-step bg-slate-200 dark:bg-slate-700'>
+                <button
+                  onClick={() => setTestMode(false)}
+                  className={clsx(
+                    'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
+                    {
+                      'bg-white rounded dark:bg-slate-400 border-gray-50':
+                        !testMode,
+                    }
+                  )}
                 >
-                  <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
-                    <button
-                      onClick={handleConvert}
-                      className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 dark:hover:bg-slate-600 easin-in-out'
-                    >
-                      convert
-                    </button>
+                  Notes
+                </button>
+                <button
+                  onClick={() => setTestMode(true)}
+                  className={clsx(
+                    'px-2 flex justify-center items-center text-sm h-6 dark:border-gray-500 dark:text-white',
+                    {
+                      'bg-white rounded dark:bg-slate-400 dark:border-gray-500':
+                        testMode,
+                    }
+                  )}
+                >
+                  Testing
+                </button>
+              </div>
+              {testMode ? (
+                <div className='w-full'>
+                  <QuestionList type='Generated' qs={genQs} />
+                  <QuestionList type='Converted' qs={qs} />
+                </div>
+              ) : (
+                <>
+                  <div className='flex flex-col w-full bg-white rounded dark:bg-slate-800 intro-notes-step'>
+                    <Highlightable handleHighlight={handleHighlight}>
+                      {blocks.map((block, index) => {
+                        return (
+                          <EditableBlock
+                            key={block.id}
+                            id={block.id}
+                            tag={block.tag}
+                            html={block.html}
+                            ast={block.ast}
+                            raw={block.raw}
+                            updatePage={updatePageHandler}
+                            addBlock={addBlockHandler}
+                            deleteBlock={removeBlockHandler}
+                            updateQuestion={addUpdateQuestionBlock}
+                            delQuestion={deleteQuestion}
+                          />
+                        );
+                      })}
+                    </Highlightable>
                   </div>
-                </Popup>
-              </>
-            )}
-          </>
-        )}
+                  <Popup
+                    top={location.top}
+                    left={location.left}
+                    height={location.height}
+                    popupOpen={popupOpen}
+                    setPopupOpen={setPopupOpen}
+                  >
+                    <div className='flex items-center h-8 text-sm bg-white border border-gray-200 divide-x rounded-sm drop-shadow-md'>
+                      <button
+                        onClick={handleConvert}
+                        className='h-full px-2 transition-colors duration-100 hover:bg-gray-200 dark:hover:bg-slate-600 easin-in-out'
+                      >
+                        convert
+                      </button>
+                    </div>
+                  </Popup>
+                </>
+              )}
+            </>
+          )}
+        </div>
+        <Source
+          source={source}
+          setSource={setSource}
+          handleGenerateQuestions={handleGenerateQuestions}
+          doneGenerating={doneGenerating}
+        />
       </div>
-      <Source
-        source={source}
-        setSource={setSource}
-        handleGenerateQuestions={handleGenerateQuestions}
-        doneGenerating={doneGenerating}
-      />
-    </div>
     </>
   );
 };
