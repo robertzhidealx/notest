@@ -46,7 +46,7 @@ const handler = async ({ body, method }, res) => {
     const event = (await collection.find({ _id: ObjectId(id) }).toArray())[0];
     // console.log(event);
     let newId = id;
-    if (title !== event.title) {
+    if (event != null && title !== event.title) {
       const arr = event.id.split('-');
       const serial = arr[arr.length - 1];
       newId = formatId(title, serial);
