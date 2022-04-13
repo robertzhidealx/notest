@@ -187,7 +187,6 @@ const Note = () => {
 
   const handleInvalidAns = async (ans, id) =>{
     //FOR SOME GODDAMN REASON QOBJECT IS ALWAYS EMPTY!!
-    console.log(qObject);
     let list = qObject.generated;
     let index = list.map((b) => b.blockId).indexOf(id);
     if(index != -1){
@@ -198,7 +197,7 @@ const Note = () => {
         }
       }
     }
-    console.log(list);
+    console.log(blocks);
     setqObject({ generated: list, converted: qObject.converted});
     await noteService.update(
       noteObj._id,
