@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { useFormik } from 'formik';
 import { CheckIcon } from '@heroicons/react/outline';
 
@@ -6,18 +6,39 @@ const pending = 0;
 const correct = 1;
 const wrong = 2;
 
-const GeneratedQuestion = ({ q, ans, setScore }) => {
+const GeneratedQuestion = ({ q, ans, id, handleInvalid, updateScore, pastAttempts}) => {
   const [status, setStatus] = useState(pending);
+  const [pastAns, setPastAns] = useState([]);
+  const [visble, setVisible] = useState(false);
+
+  useEffect(() => {
+    setPastAns(pastAttempts);
+  }, []);
+
   // setScore(3)
   const formik = useFormik({
     initialValues: {
       answer: '',
     },
     onSubmit: ({ answer }) => {
-      if (answer !== ans) setStatus(wrong);
-      else setStatus(correct);
+      if (answer !== ans) {
+        setStatus(wrong);
+        let past = pastAns;
+        past.push(answer);
+        setPastAns(past);
+        handleInvalid(answer, id);
+      }
+      else {
+        setStatus(correct);
+      }
     },
   });
+
+  useEffect(() => {
+    if(status == correct){
+      updateScore(id);
+    }
+  }, [status]);
 
   return (
     <form onSubmit={formik.handleSubmit} className='flex gap-2 text-sm'>
@@ -44,7 +65,7 @@ const GeneratedQuestion = ({ q, ans, setScore }) => {
                   : status === wrong
                   ? 'border-red-200'
                   : 'border-gray-200'
-              } outline-none mr-2`}
+              } outline-none mr-2 dark:text-slate-900`}
             />
             <button
               className='transition-colors duration-150 ease-in hover:text-slate-400'
@@ -65,13 +86,20 @@ const GeneratedQuestion = ({ q, ans, setScore }) => {
           <button
             type='button'
             className='items-center h-6 text-sm dark:border-gray-500'
-            onClick={(e) => console.log('TODO: Show past attempts')}
+            onClick={(e) => {
+              setVisible(true)
+            }}
           >
             See past attempts
           </button>
           {/* <button onClick={setStatus(correct)}>I am correct</button> */}
         </div>
         {status === wrong && <p className='mb-0'>{ans}</p>}
+        {visble === true && <p>
+            {pastAns.map((x) => {
+              return(x + '\n')
+            })}
+          </p>}
       </div>
     </form>
   );

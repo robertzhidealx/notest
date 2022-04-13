@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 
-const QuestionList = ({ type, qs }) => {
+const QuestionList = ({ type, qs, score}) => {
   const [show, setShow] = useState(false);
-  const [score, setScore] = useState(0);
+  //const [score, setScore] = useState(0);
 
   console.log(qs);
+
   return (
     <div className='self-start w-full p-2 bg-white border rounded shadow dark:bg-slate-900 dark:border-gray-300'>
       <div
@@ -27,7 +28,7 @@ const QuestionList = ({ type, qs }) => {
           {qs.length ? (
             <div>
               {/* TODO: Update score dynamically */}
-              Score: {score}/{qs.length}
+              {/*Score: {score()}/{qs.length}*/}
               {/* {qs.map((x) => x.setScore = setScore)} DOESN'T WORK?? */}
               {qs.map((x) => x)}
             </div>

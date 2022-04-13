@@ -48,6 +48,8 @@ const Note = () => {
   const [onHomePage, setOnHomePage] = useState(false); // whether the user is on the /note route
   const [sidebarHidden, setSidebarHidden] = useState(false); // whether the sidebar is hidden
   const [sourceHidden, setSourceHidden] = useState(false); // whether the source is hidden
+  const [correctQs, setCorrectQs] = useState([]);
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -57,23 +59,40 @@ const Note = () => {
       }
       setOnHomePage(false);
       const res = await noteService.getId(router.query.id[0]);
-      setqObject(res.note.questions);
       setBlocks(res.note.content);
       setNoteObj(res.note);
-      const converted = [];
-      const generated = [];
-      res.note.questions.generated.forEach((element) => {
-        generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
-      });
-      res.note.questions.converted.forEach((element) => {
-        converted.push(
-          <ConvertedQuestion text={element.text} indices={element.indices} />
-        );
-      });
-      setGenQs(generated);
-      setQs(converted);
+      setqObject({generated: res.note.questions.generated, converted: res.note.questions.converted});
     })();
   }, [router.query.id]);
+
+  useEffect(() => {
+    const converted = [];
+    const generated = [];
+    qObject.generated.forEach((element) => {
+      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
+    });
+    qObject.converted.forEach((element) => {
+      converted.push(
+        <ConvertedQuestion text={element.text} indices={element.indices} />
+      );
+    });
+    setGenQs(generated);
+    setQs(converted);
+  }, [qObject]);
+
+  const upScore = (id) => {
+    console.log(correctQs);
+    let correct = correctQs;
+    const indexCorr = correct.map((x) => x.blockId).indexOf(id);
+    console.log(indexCorr);
+    if(indexCorr == -1){
+      correct.push({blockId: id});
+      //console.log('Updated!');
+    }
+    console.log(correct.length)
+    setCorrectQs(correct);
+    setScore(correct.length);
+  }
 
   useEffect(() => {
     if (localStorage.getItem('mode') == 'light') {
@@ -121,7 +140,7 @@ const Note = () => {
     const list = [];
     const generatedData = qObject.generated;
     generatedData.forEach((element) => {
-      list.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
+      list.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
     });
     const newBlocks = [];
     for (const s of strs) {
@@ -135,8 +154,8 @@ const Note = () => {
       const html = interpreter.print(ast);
       const newBlock = { id: uid(), tag: 'p', raw, html, ast };
       newBlocks.push(newBlock);
-      generatedData.push({ q: s, ans: ans, blockId: newBlock.id });
-      list.push(<GeneratedQuestion q={s} ans={ans} />);
+      generatedData.push({ q: s, ans: ans, blockId: newBlock.id, pastAns: []});
+      list.push(<GeneratedQuestion q={s} ans={ans} id={newBlock.id} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={[]}/>);
     }
     setqObject({ generated: generatedData, converted: qObject.converted });
     // update the notes as well
@@ -165,6 +184,29 @@ const Note = () => {
       previousBlock.focus();
     }
   }, [addingBlock, removingBlock, currentBlock, previousBlock]);
+
+  const handleInvalidAns = async (ans, id) =>{
+    //FOR SOME GODDAMN REASON QOBJECT IS ALWAYS EMPTY!!
+    let list = qObject.generated;
+    let index = list.map((b) => b.blockId).indexOf(id);
+    if(index != -1){
+      if(list[index].pastAns != null){
+        let indexPast = list[index].pastAns.indexOf(ans);
+        if(index == -1){
+          list[index].pastAns.push(ans);
+        }
+      }
+    }
+    console.log(blocks);
+    setqObject({ generated: list, converted: qObject.converted});
+    await noteService.update(
+      noteObj._id,
+      noteObj.title,
+      noteObj.author,
+      blocks,
+     { generated: list, converted: qObject.converted }
+    ).then(console.log('sucess!'));
+  }
 
   const updatePageHandler = async (updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
@@ -195,9 +237,7 @@ const Note = () => {
     if (index != -1) {
       //ast updated so qustion must be deleted
       list.splice(index, 1);
-      setqObject({ generated: list, converted: qObject.converted }, () => {
-        console.log(qObject);
-      });
+      setqObject({ generated: list, converted: qObject.converted });
       await noteService.update(
         noteObj._id,
         noteObj.title,
@@ -208,7 +248,7 @@ const Note = () => {
     }
     const generated = [];
     list.forEach((element) => {
-      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
+      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
     });
     setGenQs(generated);
   };
@@ -227,6 +267,7 @@ const Note = () => {
           q: currentBlock.ast.value.q.value.value,
           ans: currentBlock.ast.value.a.value.value,
           blockId: currentBlock.id,
+          pastAns: [],
         });
       } else {
         //Old question (update it)
@@ -252,7 +293,7 @@ const Note = () => {
     );
     const generated = [];
     list.forEach((element) => {
-      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} />);
+      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
     });
     setGenQs(generated);
   };
@@ -318,7 +359,7 @@ const Note = () => {
           },
         }}
       />
-      <div className='flex'>
+      <div className='flex dark:bg-slate-800'>
         <Sidebar
           current={router.query.id}
           isHidden={sidebarHidden}
@@ -366,7 +407,17 @@ const Note = () => {
               </div>
               {testMode ? (
                 <div className='flex flex-col w-full gap-2 mt-12'>
-                  <QuestionList type='Generated' qs={genQs} />
+                  <div className='dark:text-white'>
+                  {(genQs.length != 0) ? (
+                    <div className='dark:text-white'>
+                      Score: {score}/{genQs.length}
+                    </div>) : ('')}
+                  </div>
+                  <QuestionList type='Generated' qs={genQs}/>
+                  {(qs.length != 0) ? (
+                    <div className='dark:text-white'>
+                      Score: 0/{qs.length}
+                  </div>) : ('')}
                   <QuestionList type='Converted' qs={qs} />
                 </div>
               ) : (
