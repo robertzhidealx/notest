@@ -328,7 +328,10 @@ const Note = () => {
         <div
           className={clsx(
             'flex flex-col items-center bg-white dark:bg-slate-800 px-8 pb-2 w-full overflow-y-auto min-h-screen',
-            { 'sm:ml-[200px]': !sidebarHidden, 'sm:mr-[400px]': !sourceHidden }
+            {
+              'sm:ml-[200px]': !sidebarHidden,
+              'sm:mr-[400px]': !onHomePage && !sourceHidden,
+            }
           )}
         >
           {!onHomePage && (

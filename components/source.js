@@ -33,10 +33,10 @@ const Source = ({
       <ChevronDoubleLeftIcon className='w-5 h-5 dark:text-slate-100' />
     </button>
   ) : (
-    <div className='intro-source-step w-[400px] fixed min-h-screen right-0 flex flex-col flex-none bg-white dark:bg-slate-800 border-l dark:text-white'>
+    <div className='intro-source-step w-[400px] fixed min-h-screen right-0 flex flex-col flex-none bg-white dark:bg-slate-800 border-l dark:border-slate-500 dark:text-white'>
       <textarea
         onChange={(e) => setSource(e.target.value)}
-        className='w-full flex-grow resize-none px-2 py-1.5 dark:bg-slate-900 outline-none border-b'
+        className='w-full flex-grow resize-none px-2 py-1.5 dark:bg-slate-900 outline-none border-b dark:border-slate-500'
         placeholder='Add source here!'
         value={source}
       />

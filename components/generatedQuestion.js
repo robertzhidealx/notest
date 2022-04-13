@@ -38,7 +38,7 @@ const GeneratedQuestion = ({ q, ans, setScore }) => {
               name='answer'
               value={formik.values.answer}
               onChange={formik.handleChange}
-              className={`border ${
+              className={`border text-black ${
                 status === correct
                   ? 'border-green-200'
                   : status === wrong
@@ -56,7 +56,7 @@ const GeneratedQuestion = ({ q, ans, setScore }) => {
           {/* Please help with the CSS */}
           <button
             type='button'
-            className='items-center h-6 text-sm  dark:bg-slate-400 dark:border-gray-500'
+            className='items-center h-6 text-sm dark:bg-slate-400 dark:border-gray-500'
             onClick={(e) => setStatus(correct)}
           >
             I am correct

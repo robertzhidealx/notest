@@ -92,11 +92,11 @@ const Sidebar = ({ current, isHidden, setIsHidden, setShowTutorial }) => {
   ) : (
     <div
       className={clsx(
-        'w-[200px] flex-none fixed min-h-screen bg-gray-100 dark:bg-slate-900 border-r flex flex-col justify-between'
+        'w-[200px] flex-none fixed min-h-screen bg-gray-100 dark:bg-slate-900 border-r dark:border-slate-500 flex flex-col justify-between'
       )}
     >
       <div>
-        <div className='flex items-center justify-between px-3 py-2 border-b'>
+        <div className='flex items-center justify-between px-3 py-2 border-b dark:border-slate-500'>
           <h1
             className='mb-0 text-xl font-medium cursor-pointer dark:text-white'
             onClick={() => (window.location.href = '/note')}
