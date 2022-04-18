@@ -193,7 +193,9 @@ const Note = () => {
       if(list[index].pastAns != null){
         let indexPast = list[index].pastAns.indexOf(ans);
         if(index == -1){
-          list[index].pastAns.push(ans);
+          if(ans != ""){
+            list[index].pastAns.push(ans);
+          }
         }
       }
     }

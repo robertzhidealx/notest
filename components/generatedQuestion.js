@@ -24,9 +24,11 @@ const GeneratedQuestion = ({ q, ans, id, handleInvalid, updateScore, pastAttempt
       if (answer !== ans) {
         setStatus(wrong);
         let past = pastAns;
-        past.push(answer);
-        setPastAns(past);
-        handleInvalid(answer, id);
+        if(answer != "" && answer.trim().length){
+          past.push(answer);
+          setPastAns(past);
+          handleInvalid(answer, id);
+        }
       }
       else {
         setStatus(correct);
@@ -87,7 +89,7 @@ const GeneratedQuestion = ({ q, ans, id, handleInvalid, updateScore, pastAttempt
             type='button'
             className='items-center h-6 text-sm dark:border-gray-500'
             onClick={(e) => {
-              setVisible(true)
+              setVisible(!visble)
             }}
           >
             See past attempts
@@ -96,8 +98,10 @@ const GeneratedQuestion = ({ q, ans, id, handleInvalid, updateScore, pastAttempt
         </div>
         {status === wrong && <p className='mb-0'>{ans}</p>}
         {visble === true && <p>
-            {pastAns.map((x) => {
-              return(x + '\n')
+            Past Answers: <br></br>
+            {
+            pastAns.map((x, index) => {
+              return(<div>{index + 1}.{x}<br></br></div>)
             })}
           </p>}
       </div>
