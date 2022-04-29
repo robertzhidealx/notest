@@ -321,15 +321,13 @@ const Note = () => {
         }}
       />
       <div className='flex'>
-        {/* <div className='intro-add-notes'> */}
-          <Sidebar
-            current={router.query.id}
-            isHidden={sidebarHidden}
-            setIsHidden={setSidebarHidden}
-            setShowTutorial={setShowTutorial}
-            showTutorial={showTutorial}
-          />
-        {/* </div> */}
+        <Sidebar
+          current={router.query.id}
+          isHidden={sidebarHidden}
+          setIsHidden={setSidebarHidden}
+          setShowTutorial={setShowTutorial}
+          showTutorial={showTutorial}
+        />
         <div
           className={clsx(
             'flex flex-col items-center bg-white dark:bg-slate-800 px-8 pb-2 w-full overflow-y-auto min-h-screen',

@@ -101,7 +101,7 @@ const Sidebar = ({
         'w-[200px] flex-none fixed min-h-screen bg-gray-100 dark:bg-slate-900 border-r flex flex-col justify-between'
       )}
     >
-      <div>
+      <div className='intro-add-notes'>
         <div className='flex items-center justify-between px-3 py-2 border-b'>
           <h1
             className='mb-0 text-xl font-medium cursor-pointer dark:text-white'
