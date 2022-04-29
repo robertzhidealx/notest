@@ -308,23 +308,28 @@ const Note = () => {
         continuous={true}
         // getHelpers={this.getHelpers}
         run={showTutorial}
-        scrollToFirstStep={true}
+        // scrollToFirstStep={true}
         showProgress={true}
         showSkipButton={true}
+        hideCloseButton={true}
         steps={tutorialSteps}
         styles={{
           options: {
             zIndex: 10000,
+            primaryColor: '#89CFF0', // @Robert, feel free to adjust the color!
           },
         }}
       />
       <div className='flex'>
-        <Sidebar
-          current={router.query.id}
-          isHidden={sidebarHidden}
-          setIsHidden={setSidebarHidden}
-          setShowTutorial={setShowTutorial}
-        />
+        {/* <div className='intro-add-notes'> */}
+          <Sidebar
+            current={router.query.id}
+            isHidden={sidebarHidden}
+            setIsHidden={setSidebarHidden}
+            setShowTutorial={setShowTutorial}
+            showTutorial={showTutorial}
+          />
+        {/* </div> */}
         <div
           className={clsx(
             'flex flex-col items-center bg-white dark:bg-slate-800 px-8 pb-2 w-full overflow-y-auto min-h-screen',

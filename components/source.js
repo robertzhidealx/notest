@@ -48,15 +48,18 @@ const Source = ({
           <ChevronDoubleRightIcon className='w-5 h-5 dark:text-slate-100' />
         </button>
         <div className='flex items-center gap-2'>
-          <Dropdown
-            width={110}
-            options={[
-              { label: 'Factual', cb: () => setTemperature(0.2) },
-              { label: 'Conceptual', cb: () => setTemperature(0.6) },
-              { label: 'Creative', cb: () => setTemperature(0.9) },
-            ]}
-            _default={'Factual'}
-          />
+          {/* <div className='intro-question-mode'> */}
+            <Dropdown
+              className='intro-question-mode'
+              width={110}
+              options={[
+                { label: 'Factual', cb: () => setTemperature(0.2) },
+                { label: 'Conceptual', cb: () => setTemperature(0.6) },
+                { label: 'Creative', cb: () => setTemperature(0.9) },
+              ]}
+              _default={'Factual'}
+            />
+          {/* </div> */}
           <div className='intro-generate-question-step'>
             <button
               disabled={!source || !doneGenerating}
