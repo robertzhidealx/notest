@@ -80,6 +80,7 @@ const Note = () => {
           handleInvalid={handleInvalidAns}
           updateScore={upScore}
           pastAttempts={element.pastAns}
+          handleNewAns={handleNew}
         />
       );
     });
@@ -163,6 +164,7 @@ const Note = () => {
           handleInvalid={handleInvalidAns}
           updateScore={upScore}
           pastAttempts={element.pastAns}
+          handleNewAns={handleNew}
         />
       );
     });
@@ -187,6 +189,7 @@ const Note = () => {
           handleInvalid={handleInvalidAns}
           updateScore={upScore}
           pastAttempts={[]}
+          handleNewAns={handleNew}
         />
       );
     }
@@ -225,7 +228,7 @@ const Note = () => {
     if (index != -1) {
       if (list[index].pastAns != null) {
         let indexPast = list[index].pastAns.indexOf(ans);
-        if (index == -1) {
+        if (indexPast == -1) {
           if (ans != '') {
             list[index].pastAns.push(ans);
           }
@@ -238,6 +241,33 @@ const Note = () => {
       noteObj.title,
       noteObj.author,
       blocks,
+      {
+        generated: list,
+        converted: qObject.converted,
+      }
+    );
+  };
+
+  const handleNew = async (newAns, id) => {
+    let list = qObject.generated;
+    let index = list.map((b) => b.blockId).indexOf(id);
+    let block_list = blocks;
+    if (index != -1) {
+      list[index].ans = newAns;
+      let block_index = block_list.map((b) => b.id).indexOf(list[index].blockId);
+      if(index != -1){
+        block_list[block_index].raw = `{{${list[index].q}}}((${newAns}))`;
+        block_list[block_index].ast = compiler.parse(block_list[block_index].raw);
+        block_list[block_index].html = interpreter.print(block_list[block_index].ast);
+      }
+    }
+    setqObject({ generated: list, converted: qObject.converted });
+    setBlocks(block_list);
+    await noteService.update(
+      noteObj._id,
+      noteObj.title,
+      noteObj.author,
+      block_list,
       {
         generated: list,
         converted: qObject.converted,
@@ -293,6 +323,7 @@ const Note = () => {
           handleInvalid={handleInvalidAns}
           updateScore={upScore}
           pastAttempts={element.pastAns}
+          handleNewAns={handleNew}
         />
       );
     });
@@ -345,6 +376,7 @@ const Note = () => {
           handleInvalid={handleInvalidAns}
           updateScore={upScore}
           pastAttempts={element.pastAns}
+          handleNewAns={handleNew}
         />
       );
     });

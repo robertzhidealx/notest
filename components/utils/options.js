@@ -3,7 +3,7 @@ import { ClockIcon, ClipboardCheckIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 import { useClickOutside } from '../../lib/utils';
 
-const Options = ({ history, hovered }) => {
+const Options = ({ history, hovered, handleCorrect}) => {
   // history = ['bruh', 'bruh'];
   const [showContainer, setShowContainer] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -46,6 +46,7 @@ const Options = ({ history, hovered }) => {
         <button
           className='flex items-center justify-center w-6 h-6 transition-colors duration-100 ease-in rounded-r hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600'
           type='button'
+          onClick={handleCorrect}
         >
           <ClipboardCheckIcon className='w-4 h-4 text-slate-700 dark:text-white' />
         </button>

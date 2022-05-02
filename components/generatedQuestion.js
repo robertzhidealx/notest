@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { CheckIcon } from '@heroicons/react/outline';
 import Options from './utils/options';
+import { format } from 'date-fns';
 
 const pending = 0;
 const correct = 1;
@@ -14,6 +15,7 @@ const GeneratedQuestion = ({
   handleInvalid,
   updateScore,
   pastAttempts,
+  handleNewAns,
 }) => {
   const [status, setStatus] = useState(pending);
   const [pastAns, setPastAns] = useState([]);
@@ -33,6 +35,7 @@ const GeneratedQuestion = ({
         setStatus(wrong);
         let past = pastAns;
         if (answer != '' && answer.trim().length) {
+          answer = answer.concat(' [' + format(new Date(), 'yyyy/MM/dd kk:mm:ss') + ']');
           past.push(answer);
           setPastAns(past);
           handleInvalid(answer, id);
@@ -48,6 +51,14 @@ const GeneratedQuestion = ({
       updateScore(id);
     }
   }, [status]);
+
+  const setAnswerCorrect = () => {
+    if (formik.values.answer != '' && formik.values.answer.trim().length) {
+      setStatus(correct);
+      ans = formik.values.answer;
+     handleNewAns(formik.values.answer, id);
+    }
+  }
 
   return (
     <form
@@ -98,7 +109,7 @@ const GeneratedQuestion = ({
         </div>
         {status === wrong && <p className='mb-0'>{ans}</p>}
       </div>
-      <Options history={pastAttempts} hovered={hovered} />
+      <Options history={pastAttempts} hovered={hovered} handleCorrect={setAnswerCorrect}/>
     </form>
   );
 };
