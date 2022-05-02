@@ -32,9 +32,11 @@ const GeneratedQuestion = ({
       if (answer !== ans) {
         setStatus(wrong);
         let past = pastAns;
-        past.push(answer);
-        setPastAns(past);
-        handleInvalid(answer, id);
+        if (answer != '' && answer.trim().length) {
+          past.push(answer);
+          setPastAns(past);
+          handleInvalid(answer, id);
+        }
       } else {
         setStatus(correct);
       }

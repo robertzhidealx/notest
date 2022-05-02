@@ -42,7 +42,7 @@ const ConvertedQuestion = ({ text, indices }) => {
               : status === wrong
               ? 'border-red-200'
               : 'border-gray-200'
-          } outline-none`}
+          } outline-none dark:text-slate-900`}
         />
         {text.substring(r)}
       </p>
