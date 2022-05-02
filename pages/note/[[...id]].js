@@ -61,7 +61,10 @@ const Note = () => {
       const res = await noteService.getId(router.query.id[0]);
       setBlocks(res.note.content);
       setNoteObj(res.note);
-      setqObject({generated: res.note.questions.generated, converted: res.note.questions.converted});
+      setqObject({
+        generated: res.note.questions.generated,
+        converted: res.note.questions.converted,
+      });
     })();
   }, [router.query.id]);
 
@@ -69,7 +72,16 @@ const Note = () => {
     const converted = [];
     const generated = [];
     qObject.generated.forEach((element) => {
-      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
+      generated.push(
+        <GeneratedQuestion
+          q={element.q}
+          ans={element.ans}
+          id={element.blockId}
+          handleInvalid={handleInvalidAns}
+          updateScore={upScore}
+          pastAttempts={element.pastAns}
+        />
+      );
     });
     qObject.converted.forEach((element) => {
       converted.push(
@@ -81,24 +93,27 @@ const Note = () => {
   }, [qObject]);
 
   const upScore = (id) => {
-    console.log(correctQs);
     let correct = correctQs;
     const indexCorr = correct.map((x) => x.blockId).indexOf(id);
-    console.log(indexCorr);
-    if(indexCorr == -1){
-      correct.push({blockId: id});
-      //console.log('Updated!');
+    if (indexCorr == -1) {
+      correct.push({ blockId: id });
     }
-    console.log(correct.length)
     setCorrectQs(correct);
     setScore(correct.length);
-  }
+  };
 
   useEffect(() => {
-    if (localStorage.getItem('mode') == 'light') {
-      document.documentElement.classList.remove('dark');
+    if (!localStorage.getItem('mode')) {
+      document.documentElement.classList.add('light');
+      localStorage.setItem('mode', 'light');
     } else {
-      document.documentElement.classList.add('dark');
+      if (localStorage.getItem('mode') === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
     }
   }, []);
 
@@ -140,7 +155,16 @@ const Note = () => {
     const list = [];
     const generatedData = qObject.generated;
     generatedData.forEach((element) => {
-      list.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
+      list.push(
+        <GeneratedQuestion
+          q={element.q}
+          ans={element.ans}
+          id={element.blockId}
+          handleInvalid={handleInvalidAns}
+          updateScore={upScore}
+          pastAttempts={element.pastAns}
+        />
+      );
     });
     const newBlocks = [];
     for (const s of strs) {
@@ -154,8 +178,17 @@ const Note = () => {
       const html = interpreter.print(ast);
       const newBlock = { id: uid(), tag: 'p', raw, html, ast };
       newBlocks.push(newBlock);
-      generatedData.push({ q: s, ans: ans, blockId: newBlock.id, pastAns: []});
-      list.push(<GeneratedQuestion q={s} ans={ans} id={newBlock.id} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={[]}/>);
+      generatedData.push({ q: s, ans: ans, blockId: newBlock.id, pastAns: [] });
+      list.push(
+        <GeneratedQuestion
+          q={s}
+          ans={ans}
+          id={newBlock.id}
+          handleInvalid={handleInvalidAns}
+          updateScore={upScore}
+          pastAttempts={[]}
+        />
+      );
     }
     setqObject({ generated: generatedData, converted: qObject.converted });
     // update the notes as well
@@ -185,28 +218,30 @@ const Note = () => {
     }
   }, [addingBlock, removingBlock, currentBlock, previousBlock]);
 
-  const handleInvalidAns = async (ans, id) =>{
+  const handleInvalidAns = async (ans, id) => {
     //FOR SOME GODDAMN REASON QOBJECT IS ALWAYS EMPTY!!
     let list = qObject.generated;
     let index = list.map((b) => b.blockId).indexOf(id);
-    if(index != -1){
-      if(list[index].pastAns != null){
+    if (index != -1) {
+      if (list[index].pastAns != null) {
         let indexPast = list[index].pastAns.indexOf(ans);
-        if(index == -1){
+        if (index == -1) {
           list[index].pastAns.push(ans);
         }
       }
     }
-    console.log(blocks);
-    setqObject({ generated: list, converted: qObject.converted});
+    setqObject({ generated: list, converted: qObject.converted });
     await noteService.update(
       noteObj._id,
       noteObj.title,
       noteObj.author,
       blocks,
-     { generated: list, converted: qObject.converted }
-    ).then(console.log('sucess!'));
-  }
+      {
+        generated: list,
+        converted: qObject.converted,
+      }
+    );
+  };
 
   const updatePageHandler = async (updatedBlock) => {
     const index = blocks.map((b) => b.id).indexOf(updatedBlock.id);
@@ -248,7 +283,16 @@ const Note = () => {
     }
     const generated = [];
     list.forEach((element) => {
-      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
+      generated.push(
+        <GeneratedQuestion
+          q={element.q}
+          ans={element.ans}
+          id={element.blockId}
+          handleInvalid={handleInvalidAns}
+          updateScore={upScore}
+          pastAttempts={element.pastAns}
+        />
+      );
     });
     setGenQs(generated);
   };
@@ -281,9 +325,7 @@ const Note = () => {
         list.splice(index, 1);
       }
     }
-    setqObject({ generated: list, converted: qObject.converted }, () => {
-      console.log(qObject);
-    });
+    setqObject({ generated: list, converted: qObject.converted });
     await noteService.update(
       noteObj._id,
       noteObj.title,
@@ -293,7 +335,16 @@ const Note = () => {
     );
     const generated = [];
     list.forEach((element) => {
-      generated.push(<GeneratedQuestion q={element.q} ans={element.ans} id={element.blockId} handleInvalid={handleInvalidAns} updateScore={upScore} pastAttempts={element.pastAns}/>);
+      generated.push(
+        <GeneratedQuestion
+          q={element.q}
+          ans={element.ans}
+          id={element.blockId}
+          handleInvalid={handleInvalidAns}
+          updateScore={upScore}
+          pastAttempts={element.pastAns}
+        />
+      );
     });
     setGenQs(generated);
   };
@@ -345,9 +396,7 @@ const Note = () => {
   return (
     <>
       <Joyride
-        // callback={this.handleJoyrideCallback}
         continuous={true}
-        // getHelpers={this.getHelpers}
         run={showTutorial}
         scrollToFirstStep={true}
         showProgress={true}
@@ -355,7 +404,7 @@ const Note = () => {
         steps={tutorialSteps}
         styles={{
           options: {
-            zIndex: 10000,
+            zIndex: 100,
           },
         }}
       />
@@ -408,16 +457,24 @@ const Note = () => {
               {testMode ? (
                 <div className='flex flex-col w-full gap-2 mt-12'>
                   <div className='dark:text-white'>
-                  {(genQs.length != 0) ? (
-                    <div className='dark:text-white'>
-                      Score: {score}/{genQs.length}
-                    </div>) : ('')}
+                    {genQs.length != 0 ? (
+                      <div className='dark:text-white'>
+                        Score: {score}/{genQs.length}
+                      </div>
+                    ) : (
+                      ''
+                    )}
                   </div>
-                  <QuestionList type='Generated' qs={genQs}/>
-                  {(qs.length != 0) ? (
-                    <div className='dark:text-white'>
-                      Score: 0/{qs.length}
-                  </div>) : ('')}
+                  <QuestionList
+                    type='Generated'
+                    qs={genQs}
+                    defaultShow={true}
+                  />
+                  {qs.length != 0 ? (
+                    <div className='dark:text-white'>Score: 0/{qs.length}</div>
+                  ) : (
+                    ''
+                  )}
                   <QuestionList type='Converted' qs={qs} />
                 </div>
               ) : (

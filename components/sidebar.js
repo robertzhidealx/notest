@@ -160,17 +160,19 @@ const Sidebar = ({ current, isHidden, setIsHidden, setShowTutorial }) => {
         <div
           className='flex items-center justify-center w-6 h-6 transition-colors duration-150 ease-in cursor-pointer hover:text-sky-500 dark:text-white dark:hover:text-sky-500'
           onClick={() => {
-            if (mode === 'light') {
+            if (localStorage.getItem('mode') === 'light') {
               localStorage.setItem('mode', 'dark');
+              document.documentElement.classList.remove('light');
               document.documentElement.classList.add('dark');
             } else {
               localStorage.setItem('mode', 'light');
               document.documentElement.classList.remove('dark');
+              document.documentElement.classList.add('light');
             }
-            setMode((mode) => (mode === 'light' ? 'dark' : 'light'));
+            setMode((mode) => (mode === 'light' || !mode ? 'dark' : 'light'));
           }}
         >
-          {mode === 'light' ? (
+          {mode === 'light' || !mode ? (
             <SunIcon className='w-5 h-5' />
           ) : (
             <MoonIcon className='w-5 h-5' />

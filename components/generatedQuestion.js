@@ -1,15 +1,23 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { CheckIcon } from '@heroicons/react/outline';
+import Options from './utils/options';
 
 const pending = 0;
 const correct = 1;
 const wrong = 2;
 
-const GeneratedQuestion = ({ q, ans, id, handleInvalid, updateScore, pastAttempts}) => {
+const GeneratedQuestion = ({
+  q,
+  ans,
+  id,
+  handleInvalid,
+  updateScore,
+  pastAttempts,
+}) => {
   const [status, setStatus] = useState(pending);
   const [pastAns, setPastAns] = useState([]);
-  const [visble, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     setPastAns(pastAttempts);
@@ -27,21 +35,25 @@ const GeneratedQuestion = ({ q, ans, id, handleInvalid, updateScore, pastAttempt
         past.push(answer);
         setPastAns(past);
         handleInvalid(answer, id);
-      }
-      else {
+      } else {
         setStatus(correct);
       }
     },
   });
 
   useEffect(() => {
-    if(status == correct){
+    if (status == correct) {
       updateScore(id);
     }
   }, [status]);
 
   return (
-    <form onSubmit={formik.handleSubmit} className='flex gap-2 text-sm'>
+    <form
+      onSubmit={formik.handleSubmit}
+      className='relative text-sm'
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div className='flex-col justify-center w-full gap-2'>
         <div className='flex items-center gap-1 mb-1'>
           <span className='flex items-center justify-center w-4 h-4 p-1 text-xs font-medium text-red-500 border-[1.5px] border-red-500 rounded'>
@@ -74,33 +86,17 @@ const GeneratedQuestion = ({ q, ans, id, handleInvalid, updateScore, pastAttempt
               <CheckIcon className='w-5 h-5' />
             </button>
           </div>
-          {/* Please help with the CSS */}
-          <button
+          {/* <button
             type='button'
             className='items-center h-6 text-sm dark:bg-slate-400 dark:border-gray-500'
-            onClick={(e) => setStatus(correct)}
+            onClick={() => setStatus(correct)}
           >
             I am correct
-          </button>
-          -
-          <button
-            type='button'
-            className='items-center h-6 text-sm dark:border-gray-500'
-            onClick={(e) => {
-              setVisible(true)
-            }}
-          >
-            See past attempts
-          </button>
-          {/* <button onClick={setStatus(correct)}>I am correct</button> */}
+          </button> */}
         </div>
         {status === wrong && <p className='mb-0'>{ans}</p>}
-        {visble === true && <p>
-            {pastAns.map((x) => {
-              return(x + '\n')
-            })}
-          </p>}
       </div>
+      <Options history={pastAttempts} hovered={hovered} />
     </form>
   );
 };
