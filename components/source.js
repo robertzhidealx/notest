@@ -4,7 +4,13 @@ import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
 } from '@heroicons/react/outline';
-import Dropdown from './utils/dropdown';
+import { Selectable } from '@robertz65/lyte';
+
+const DropdownOptions = [
+  { label: 0.2, content: 'Factual' },
+  { label: 0.6, content: 'Conceptual' },
+  { label: 0.9, content: 'Creative' },
+];
 
 const Source = ({
   source,
@@ -14,7 +20,7 @@ const Source = ({
   isHidden,
   setIsHidden,
 }) => {
-  const [temperature, setTemperature] = useState(0.5);
+  const [temperature, setTemperature] = useState(0.2);
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,14 +54,12 @@ const Source = ({
           <ChevronDoubleRightIcon className='w-5 h-5 dark:text-slate-100' />
         </button>
         <div className='flex items-center gap-2'>
-          <Dropdown
-            width={110}
-            options={[
-              { label: 'Factual', cb: () => setTemperature(0.2) },
-              { label: 'Conceptual', cb: () => setTemperature(0.6) },
-              { label: 'Creative', cb: () => setTemperature(0.9) },
-            ]}
-            _default={'Factual'}
+          <Selectable
+            width={180}
+            menuPlacement='top'
+            options={DropdownOptions}
+            defaultValue={0.2}
+            onChange={(value) => setTemperature(value[0].label)}
           />
           <div className='intro-generate-question-step'>
             <button

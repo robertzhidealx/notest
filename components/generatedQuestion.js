@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { CheckIcon } from '@heroicons/react/outline';
-import Options from './utils/options';
 import { format } from 'date-fns';
+import Options from './utils/options';
 
 const pending = 0;
 const correct = 1;
@@ -35,7 +35,9 @@ const GeneratedQuestion = ({
         setStatus(wrong);
         let past = pastAns;
         if (answer != '' && answer.trim().length) {
-          answer = answer.concat(' [' + format(new Date(), 'yyyy/MM/dd kk:mm:ss') + ']');
+          answer = answer.concat(
+            ' - ' + format(new Date(), 'LLLL d, yyyy KK:mm a')
+          );
           past.push(answer);
           setPastAns(past);
           handleInvalid(answer, id);
@@ -56,9 +58,9 @@ const GeneratedQuestion = ({
     if (formik.values.answer != '' && formik.values.answer.trim().length) {
       setStatus(correct);
       ans = formik.values.answer;
-     handleNewAns(formik.values.answer, id);
+      handleNewAns(formik.values.answer, id);
     }
-  }
+  };
 
   return (
     <form
@@ -99,17 +101,14 @@ const GeneratedQuestion = ({
               <CheckIcon className='w-5 h-5' />
             </button>
           </div>
-          {/* <button
-            type='button'
-            className='items-center h-6 text-sm dark:bg-slate-400 dark:border-gray-500'
-            onClick={() => setStatus(correct)}
-          >
-            I am correct
-          </button> */}
         </div>
         {status === wrong && <p className='mb-0'>{ans}</p>}
       </div>
-      <Options history={pastAttempts} hovered={hovered} handleCorrect={setAnswerCorrect}/>
+      <Options
+        history={pastAttempts}
+        hovered={hovered}
+        handleCorrect={setAnswerCorrect}
+      />
     </form>
   );
 };

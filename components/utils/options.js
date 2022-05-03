@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { ClockIcon, ClipboardCheckIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
+import { formatDistanceToNow } from 'date-fns';
 import { useClickOutside } from '../../lib/utils';
 
-const Options = ({ history, hovered, handleCorrect}) => {
-  // history = ['bruh', 'bruh'];
+const Options = ({ history, hovered, handleCorrect }) => {
   const [showContainer, setShowContainer] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const ref = useRef(null);
@@ -57,7 +57,12 @@ const Options = ({ history, hovered, handleCorrect}) => {
                 <div className='flex flex-col gap-1 p-2'>
                   {history.map((attempt, index) => (
                     <div key={attempt} className='mb-0'>
-                      {`${index + 1}. ${attempt}`}
+                      {`${index + 1}. ${attempt.split('-')[0]}`}
+                      <span className='text-slate-500'>
+                        {formatDistanceToNow(new Date(attempt.split('-')[1]), {
+                          addSuffix: true,
+                        })}
+                      </span>
                     </div>
                   ))}
                 </div>

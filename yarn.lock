@@ -204,6 +204,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@robertz65/lyte@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@robertz65/lyte/-/lyte-0.0.5.tgz#8fc617812838d4ff6dc5a86fdc32480625994e88"
+  integrity sha512-1igGknnFgOQbkdccbLzLGq1DXvht+ew4oqIcf+DXfyQJsHUwp57wT1fiYkRlvgjlJLO1tngtNnSUcoNtf/1Brg==
+
 "@rushstack/eslint-patch@^1.0.8":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.1.0.tgz"
