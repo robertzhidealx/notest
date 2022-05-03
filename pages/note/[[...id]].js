@@ -254,11 +254,17 @@ const Note = () => {
     let block_list = blocks;
     if (index != -1) {
       list[index].ans = newAns;
-      let block_index = block_list.map((b) => b.id).indexOf(list[index].blockId);
-      if(index != -1){
+      let block_index = block_list
+        .map((b) => b.id)
+        .indexOf(list[index].blockId);
+      if (index != -1) {
         block_list[block_index].raw = `{{${list[index].q}}}((${newAns}))`;
-        block_list[block_index].ast = compiler.parse(block_list[block_index].raw);
-        block_list[block_index].html = interpreter.print(block_list[block_index].ast);
+        block_list[block_index].ast = compiler.parse(
+          block_list[block_index].raw
+        );
+        block_list[block_index].html = interpreter.print(
+          block_list[block_index].ast
+        );
       }
     }
     setqObject({ generated: list, converted: qObject.converted });
@@ -432,13 +438,15 @@ const Note = () => {
       <Joyride
         continuous={true}
         run={showTutorial}
-        scrollToFirstStep={true}
+        // scrollToFirstStep={true}
         showProgress={true}
         showSkipButton={true}
+        hideCloseButton={true}
         steps={tutorialSteps}
         styles={{
           options: {
             zIndex: 100,
+            primaryColor: '#89CFF0', // @Robert, feel free to adjust the color!
           },
         }}
       />
@@ -448,6 +456,7 @@ const Note = () => {
           isHidden={sidebarHidden}
           setIsHidden={setSidebarHidden}
           setShowTutorial={setShowTutorial}
+          showTutorial={showTutorial}
         />
         <div
           className={clsx(

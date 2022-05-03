@@ -13,7 +13,13 @@ import {
 import { initialBlock } from '../lib/utils';
 import { noteService } from '../services/note.services';
 
-const Sidebar = ({ current, isHidden, setIsHidden, setShowTutorial }) => {
+const Sidebar = ({
+  current,
+  isHidden,
+  setIsHidden,
+  setShowTutorial,
+  showTutorial,
+}) => {
   const [notes, setNotes] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [mode, setMode] = useState(
@@ -95,8 +101,8 @@ const Sidebar = ({ current, isHidden, setIsHidden, setShowTutorial }) => {
         'w-[200px] flex-none fixed min-h-screen bg-gray-100 dark:bg-slate-900 border-r dark:border-slate-500 flex flex-col justify-between'
       )}
     >
-      <div>
-        <div className='flex items-center justify-between px-3 py-2 border-b dark:border-slate-500'>
+      <div className='intro-add-notes'>
+        <div className='flex items-center justify-between px-3 py-2 border-b'>
           <h1
             className='mb-0 text-xl font-medium cursor-pointer dark:text-white'
             onClick={() => (window.location.href = '/note')}
@@ -178,12 +184,24 @@ const Sidebar = ({ current, isHidden, setIsHidden, setShowTutorial }) => {
             <MoonIcon className='w-5 h-5' />
           )}
         </div>
-        <div
-          className='flex items-center justify-center w-6 h-6 cursor-pointer dark:text-white'
-          onClick={() => setShowTutorial(true)}
-        >
-          <InformationCircleIcon className='w-5 h-5' />
-        </div>
+        {!showTutorial ? (
+          // tutorial should only happen once!
+          <div
+            className='flex items-center justify-center w-6 h-6 cursor-pointer dark:text-white'
+            onClick={() => {
+              // handleCreate();
+              // TODO: Add code to create new notest
+              console.log(window.location.href);
+              // if (window.location.href === "localhost:3000" + "/note")
+              console.log(
+                'Add code to create a new Notest if not currently focused on notest'
+              );
+              setShowTutorial(true);
+            }}
+          >
+            <InformationCircleIcon className='w-5 h-5' />
+          </div>
+        ) : null}
       </div>
     </div>
   );
