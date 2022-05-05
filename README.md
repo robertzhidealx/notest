@@ -2,22 +2,29 @@
 
 ## Setup
 
-For the app to work, you need to create a `.env.local` file at the root directory and insert the following line:
+For the app to work, you need to create a `.env.local` file at the project root directory and copy and paste the following:
 
 ```
 NEXT_PUBLIC_OPENAI_API_KEY=
+MONGODB_URI=mongodb+srv://testuser:HlmE6UHlLWNu6j5P@notesttest.sss54.mongodb.net/Notest?retryWrites=true&w=majority
 ```
 
-You can obtain your API key at https://beta.openai.com/account/api-keys
+You can obtain your API key at https://beta.openai.com/account/api-keys, and paste it as the value of `NEXT_PUBLIC_OPENAI_API_KEY` in the above environment file.
 
-You would also need to obtain the MongoDB URI and paste it in the env file in order to develop locally. **For those simply wanting to view the latest deployment, simply go to http://notest-hyper.vercel.app.**
+The `MONGODB_URI` has already been provided to you (the TA) in order to locally run the project (testuser made just for this purpose). We each have our own URI. **For those simply wanting to view the latest deployment, simply go to http://notest-hyper.vercel.app.**
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```
+npm install
+```
+
+Then run the development server:
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
