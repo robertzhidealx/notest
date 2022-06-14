@@ -4,7 +4,6 @@ import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import { clientPromise } from '../../../lib/mongodb';
 
 export default NextAuth({
-  // https://next-auth.js.org/configuration/providers/oauth
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
@@ -20,8 +19,8 @@ export default NextAuth({
     signOut: '/signout',
   },
   callbacks: {
-    async session({ session, token, user }) {
-      session.userId = user.id;
+    async session({ session, user }) {
+      session.user.id = user.id;
       return session;
     },
   },
