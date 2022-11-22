@@ -101,7 +101,7 @@ const Home = () => {
                 <img
                   alt='team'
                   className='flex-shrink-0 object-cover object-center w-16 h-16 mr-4 bg-gray-100 rounded-full'
-                  src='https://www.themebeta.com/files/picture/201903/02/6141f356734ad9d8930cccce5c0e6e57.png'
+                  src='https://robertzhang.vercel.app/me.jpeg'
                 />
                 <div className='flex-grow'>
                   <h2 className='font-medium text-gray-900 title-font'>
